@@ -408,10 +408,8 @@ $.widget( "ui.dialog", {
 		this.uiDialogTitlebarClose = $( "<button type='button'></button>" )
 			.button( {
 				label: this.options.closeText,
-				icons: {
-					primary: "ui-icon-closethick"
-				},
-				text: false
+				icon: "ui-icon-closethick",
+				showLabel: false
 			} )
 			.appendTo( this.uiDialogTitlebar );
 
@@ -480,11 +478,13 @@ $.widget( "ui.dialog", {
 				click.apply( that.element[ 0 ], arguments );
 			};
 			buttonOptions = {
-				icons: props.icons,
-				text: props.showText
+				icon: props.icon,
+				iconPosition: props.iconPosition,
+				showLabel: props.showLabel
 			};
-			delete props.icons;
-			delete props.showText;
+			delete props.icon;
+			delete props.iconPosition;
+			delete props.showLabel;
 			$( "<button></button>", props )
 				.button( buttonOptions )
 				.appendTo( that.uiButtonSet );
