@@ -17,11 +17,13 @@ test( "refresh: Ensure disabled state is preserved correctly.", function() {
 
 	var element = $( "<a href='#'></a>" );
 	element.button({ disabled: true }).button( "refresh" );
-	ok( element.button( "option", "disabled" ), "Anchor button should remain disabled after refresh" ); //See #8237
+	ok( element.button( "option", "disabled" ),
+		"Anchor button should remain disabled after refresh" );
 
 	element = $( "<div></div>" );
 	element.button({ disabled: true }).button( "refresh" );
-	ok( element.button( "option", "disabled" ), "<div> buttons should remain disabled after refresh" );
+	ok( element.button( "option", "disabled" ),
+		"<div> buttons should remain disabled after refresh" );
 
 	element = $( "<button></button>" );
 	element.button( { disabled: true} ).button( "refresh" );
@@ -30,7 +32,8 @@ test( "refresh: Ensure disabled state is preserved correctly.", function() {
 
 	element = $( "<button></button>" );
 	element.button( { disabled: true} ).prop( "disabled", false ).button( "refresh" );
-	ok( !element.button( "option", "disabled" ), "Changing a <button>'s disabled property should update the state after refresh."); //See #8828
+	ok( !element.button( "option", "disabled" ),
+		"Changing a <button>'s disabled property should update the state after refresh.");
 
 });
 

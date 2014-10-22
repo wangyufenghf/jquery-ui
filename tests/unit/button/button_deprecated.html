@@ -4,16 +4,41 @@
 	<meta charset="utf-8">
 	<title>jQuery UI Button Test Suite</title>
 
-	<script src="../../../external/requirejs/require.js"></script>
-	<script src="../../lib/css.js" data-modules="core button"></script>
-	<script src="../../lib/bootstrap.js" data-widget="button" data-deprecated="true"></script>
+	<script src="../../jquery.js"></script>
+	<link rel="stylesheet" href="../../../external/qunit/qunit.css">
+	<script src="../../../external/qunit/qunit.js"></script>
+	<script src="../../../external/jquery-simulate/jquery.simulate.js"></script>
+	<script src="../testsuite.js"></script>
+	<script src="../../../external/qunit-assert-classes/qunit-assert-classes.js"></script>
+	<script>
+	TestHelpers.loadResources({
+		css: [ "core", "button" ],
+		js: [
+			"ui/core.js",
+			"ui/widget.js",
+			"ui/button.js",
+			"ui/checkboxradio.js",
+			"ui/controlgroup.js"
+		]
+	});
+	</script>
+
+	<script src="button_core.js"></script>
+	<script src="button_events.js"></script>
+	<script src="button_methods.js"></script>
+	<script src="button_options.js"></script>
+	<script src="button_core_deprecated.js"></script>
+	<script src="button_common_deprecated.js"></script>
+	<script src="button_methods_deprecated.js"></script>
+	<script src="button_options_deprecated.js"></script>
+	<script src="../swarminject.js"></script>
 </head>
 <body>
 
 <div id="qunit"></div>
 <div id="qunit-fixture">
 
-<div><button id="button">Label</button></div>
+<div class="buttonset"><button id="button">Label</button><button>button 2</button></div>
 
 <div id="radio0" style="margin-top: 2em;">
 	<input type="radio" id="radio01" name="radio" checked="checked"><label for="radio01">Choice 1</label>
@@ -51,9 +76,8 @@
 <input type="checkbox" id="check2"><label for="check2">Checkbox</label>
 
 <div><input id="submit" type="submit" value="Label"></div>
-
-<button id="button1">Button</button>
 <button id="button-disabled" disabled>Button</button>
+<button id="button1">Button</button>
 
 </div>
 </body>
