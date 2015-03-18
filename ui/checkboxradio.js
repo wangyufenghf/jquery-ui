@@ -8,11 +8,11 @@
  *
  * http://api.jqueryui.com/checkboxradio/
  */
-(function( factory ) {
+( function( factory ) {
 	if ( typeof define === "function" && define.amd ) {
 
 		// AMD. Register as an anonymous module.
-		define([
+		define( [
 			"jquery",
 			"./core",
 			"./widget"
@@ -22,13 +22,13 @@
 		// Browser globals
 		factory( jQuery );
 	}
-}(function( $ ) {
+}( function( $ ) {
 
 var formResetHandler = function() {
 		var form = $( this );
-		setTimeout(function() {
+		setTimeout( function() {
 			form.find( ".ui-checkboxradio" ).checkboxradio( "refresh" );
-		});
+		} );
 	},
 	escapeId = new RegExp( /([!"#$%&'()*+,./:;<=>?@[\]^`{|}~])/g ),
 	widgetCount = 0;
@@ -61,7 +61,7 @@ $.widget( "ui.checkboxradio", {
 		this.originalLabel = "";
 		this.label.contents().not( this.element ).each( function() {
 			that.originalLabel += ( this.nodeType === 3 ) ? $( this ).text() : this.outerHTML;
-		});
+		} );
 		if ( this.originalLabel ) {
 			options.label = this.originalLabel;
 		}
@@ -88,7 +88,7 @@ $.widget( "ui.checkboxradio", {
 
 		this._enhance();
 
-		this._on({
+		this._on( {
 			"change": "_toggleClasses",
 			"focus": function() {
 				this._addClass( this.label, null, "ui-state-focus ui-visual-focus" );
@@ -96,7 +96,7 @@ $.widget( "ui.checkboxradio", {
 			"blur": function() {
 				this._removeClass( this.label, null, "ui-state-focus ui-visual-focus" );
 			}
-		});
+		} );
 	},
 
 	_readLabel: function() {
@@ -123,7 +123,7 @@ $.widget( "ui.checkboxradio", {
 			id = this.element.attr( "id" );
 			if ( id ) {
 				labelSelector = "label[for='" +
-				this.element.attr( "id" ).replace( escapeId, "\\$1" ) + "']";
+					this.element.attr( "id" ).replace( escapeId, "\\$1" ) + "']";
 				this.label = ancestor.find( labelSelector );
 
 				if ( !this.label.length ) {
@@ -183,8 +183,8 @@ $.widget( "ui.checkboxradio", {
 	},
 
 	_getRadioGroup: function() {
-		var name = this.element[0].name,
-			form = this.element[0].form,
+		var name = this.element[ 0 ].name,
+			form = this.element[ 0 ].form,
 			radios = $( [] );
 		if ( name ) {
 			name = name.replace( escapeId, "\\$1" );
@@ -192,9 +192,9 @@ $.widget( "ui.checkboxradio", {
 				radios = $( form ).find( "[name='" + name + "']" );
 			} else {
 				radios = this.document.find( "[name='" + name + "']" )
-				.filter(function() {
-					return !this.form;
-				});
+					.filter( function() {
+						return !this.form;
+					} );
 			}
 		}
 		return radios.not( this.element );
@@ -219,7 +219,7 @@ $.widget( "ui.checkboxradio", {
 						instance._removeClass( instance.label,
 							"ui-checkboxradio-checked", "ui-state-active" );
 					}
-				});
+				} );
 		}
 	},
 
@@ -242,7 +242,7 @@ $.widget( "ui.checkboxradio", {
 		this._super( key, value );
 		if ( key === "disabled" ) {
 			this._toggleClass( this.label, null, "ui-state-disabled", value );
-			this.element[ 0 ].disabled =  value;
+			this.element[ 0 ].disabled = value;
 			return;
 		}
 		this.refresh();
@@ -287,12 +287,12 @@ $.widget( "ui.checkboxradio", {
 		}
 
 		if ( isDisabled !== this.options.disabled ) {
-			this._setOptions({ "disabled": isDisabled });
+			this._setOptions( { "disabled": isDisabled } );
 		}
 	}
 
-});
+} );
 
 return $.ui.checkboxradio;
 
-}));
+} ) );
