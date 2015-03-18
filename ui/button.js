@@ -16,11 +16,11 @@
 //>>css.structure: ../themes/base/button.css
 //>>css.theme: ../themes/base/theme.css
 
-(function( factory ) {
+( function( factory ) {
 	if ( typeof define === "function" && define.amd ) {
 
 		// AMD. Register as an anonymous module.
-		define([
+		define( [
 			"jquery",
 			"./core",
 			"./widget"
@@ -30,19 +30,19 @@
 		// Browser globals
 		factory( jQuery );
 	}
-}(function( $ ) {
+}( function( $ ) {
 
 var formResetHandler = function() {
 		var form = $( this );
 
 		// Wait for the form reset to actually happen before refreshing
-		setTimeout(function() {
+		setTimeout( function() {
 
 			// We find .ui-button first then filter by :ui-button because doing a
 			// widget pseudo selectors are very very slow but we need to filter out
 			// css only buttons
 			form.find( ".ui-button" ).filter( ":ui-button" ).button( "refresh" );
-		});
+		} );
 	},
 	buttonCount = 0;
 
@@ -62,7 +62,7 @@ $.widget( "ui.button", {
 
 	_getCreateOptions: function() {
 		var disabled,
-			options = {};
+			options = this._super() || {};
 
 		this.isInput = this.element.is( "input" );
 
@@ -99,14 +99,14 @@ $.widget( "ui.button", {
 		this._enhance();
 
 		if ( this.element.is( "a" ) ) {
-			this._on({
+			this._on( {
 				"keyup": function( event ) {
 					if ( event.keyCode === $.ui.keyCode.SPACE ) {
 						event.preventDefault();
 						this.element[ 0 ].click();
 					}
 				}
-			});
+			} );
 		}
 	},
 
@@ -138,10 +138,8 @@ $.widget( "ui.button", {
 	},
 
 	_updateIcon: function( icon ) {
-		var prepend =
-				( this.options.iconPosition === "top" || this.options.iconPosition === "beginning" ),
-			displayBlock =
-				( this.options.iconPosition === "top" ||
+		var prepend = ( this.options.iconPosition === "top" || this.options.iconPosition === "beginning" ),
+			displayBlock = ( this.options.iconPosition === "top" ||
 				this.options.iconPosition === "bottom" );
 		if ( !this.icon ) {
 			this.icon = $( "<span>" );
@@ -239,12 +237,12 @@ $.widget( "ui.button", {
 			this.element[ 0 ].disabled : this.element.hasClass( "ui-button-disabled" );
 
 		if ( isDisabled !== this.options.disabled ) {
-			this._setOptions({ "disabled": isDisabled });
+			this._setOptions( { "disabled": isDisabled } );
 		}
 
 		this._updateTooltip();
 	}
-});
+} );
 
 // DEPRECATED
 if ( $.uiBackCompat !== false ) {
@@ -303,16 +301,16 @@ if ( $.uiBackCompat !== false ) {
 			}
 			this._superApply( arguments );
 		}
-	});
-	$.fn.button = (function( orig ) {
+	} );
+	$.fn.button = ( function( orig ) {
 		return function() {
 			if ( this.length && this[ 0 ].tagName === "INPUT" &&
-					( this.attr( "type") === "checkbox" || this.attr( "type" ) === "radio" ) ) {
+					( this.attr( "type" ) === "checkbox" || this.attr( "type" ) === "radio" ) ) {
 				if ( $.ui.checkboxradio ) {
 					if ( arguments.length === 0 ) {
-						return this.checkboxradio({
+						return this.checkboxradio( {
 							"icon": false
-						});
+						} );
 					} else {
 						return this.checkboxradio.apply( this, arguments );
 					}
@@ -323,7 +321,7 @@ if ( $.uiBackCompat !== false ) {
 				return orig.apply( this, arguments );
 			}
 		};
-	})( $.fn.button );
+	} )( $.fn.button );
 	$.fn.buttonset = function() {
 		if ( $.ui.controlgroup ) {
 			if ( arguments[ 0 ] === "option" && arguments[ 1 ] === "items" && arguments[ 2 ] ) {
@@ -345,4 +343,4 @@ if ( $.uiBackCompat !== false ) {
 
 return $.ui.button;
 
-}));
+} ) );
