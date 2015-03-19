@@ -79,7 +79,6 @@ var
 	component = grunt.option( "component" ) || "**",
 
 	jscsBad = [
-		"ui/button.js",
 		"ui/datepicker.js",
 		"ui/draggable.js",
 		"ui/droppable.js",
