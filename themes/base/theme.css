@@ -59,9 +59,6 @@ html .ui-button.ui-state-disabled:active {
 	font-weight: normal/*{fwDefault}*/;
 	color: #454545/*{fcDefault}*/;
 }
-.ui-state-active .ui-icon-background {
-	background-color: #e6e6e6/*{bgColorDefault}*/;
-}
 .ui-state-default a,
 .ui-state-default a:link,
 .ui-state-default a:visited,
@@ -112,7 +109,9 @@ a.ui-button:active,
 	font-weight: normal/*{fwDefault}*/;
 	color: #ffffff/*{fcActive}*/;
 }
-.ui-icon-background {
+.ui-icon-background,
+.ui-state-active .ui-icon-background {
+	border: #003eff/*{borderColorActive}*/;
 	background-color: #ffffff/*{bgColorActive}*/;
 }
 .ui-state-active a,
@@ -205,7 +204,8 @@ a.ui-button:active,
 .ui-button:active .ui-icon {
 	background-image: url("images/ui-icons_ffffff_256x240.png")/*{iconsActive}*/;
 }
-.ui-state-highlight .ui-icon {
+.ui-state-highlight .ui-icon,
+.ui-button .ui-state-highlight.ui-icon {
 	background-image: url("images/ui-icons_777620_256x240.png")/*{iconsHighlight}*/;
 }
 .ui-state-error .ui-icon,

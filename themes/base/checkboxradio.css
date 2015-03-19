@@ -19,9 +19,6 @@
 	border-radius: 1em;
 	overflow: visible;
 	border: none;
-	background-color: rgb( 192, 192, 192 );
-	background-color: rgba( 0, 0, 0, .3 );
-	opacity: .3;
 }
 .ui-checkboxradio-radio-label.ui-checkboxradio-checked .ui-icon,
 .ui-checkboxradio-radio-label.ui-checkboxradio-checked:hover .ui-icon {

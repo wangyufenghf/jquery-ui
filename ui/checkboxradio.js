@@ -203,9 +203,11 @@ $.widget( "ui.checkboxradio", {
 	_toggleClasses: function() {
 		var checked = this.element[ 0 ].checked;
 		this._toggleClass( this.label, "ui-checkboxradio-checked", "ui-state-active", checked );
-		this._toggleClass( this.icon, null, "ui-state-hover", checked );
+
 		if ( this.options.icon && this.type === "checkbox" ) {
-			this._toggleClass( this.icon, null, "ui-icon-check", checked )
+
+			// We add ui-state-highlight to change the icon color
+			this._toggleClass( this.icon, null, "ui-icon-check ui-state-highlight", checked )
 				._toggleClass( this.icon, null, "ui-icon-blank", !checked );
 		}
 		if ( this.type === "radio" ) {
