@@ -6,7 +6,7 @@ define( [
 module( "selectmenu: core" );
 
 test( "markup structure", function( assert ) {
-	expect( 4 );
+	expect( 5 );
 
 	var element = $( "#files" ).selectmenu(),
 		button = element.selectmenu( "widget" ),
