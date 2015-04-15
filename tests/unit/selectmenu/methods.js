@@ -95,7 +95,7 @@ asyncTest( "refresh - change selected option", function() {
 		element.find( "option" ).prop( "selected", false );
 		element.append( "<option selected value=\"selected_option\">Selected option</option>" );
 		element.selectmenu( "refresh" );
-		equal( " Selected option", button.text(), "button text after adding selected option" );
+		equal( button.text(), " Selected option", "button text after adding selected option" );
 
 		start();
 	});
