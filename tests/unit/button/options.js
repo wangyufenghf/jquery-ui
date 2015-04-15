@@ -6,14 +6,13 @@ define( [
 module( "button: options" );
 
 test( "disabled, explicit value", function( assert ) {
-	expect( 9 );
+	expect( 8 );
 
 	var element = $( "#button" ).button({ disabled: false });
-	deepEqual( element.button( "option", "disabled" ), false, "disabled option set to false" );
-	deepEqual( element.prop( "disabled" ), false, "Disabled property is false" );
+	ok( !element.button( "option", "disabled" ), "disabled option set to false" );
+	ok( !element.prop( "disabled" ), "Disabled property is false" );
 
-	assert.lacksClasses( element.button( "widget" ), "ui-state-disabled" );
-	assert.lacksClasses( element.button( "widget" ), "ui-button-disabled" );
+	assert.lacksClasses( element.button( "widget" ), "ui-state-disabled ui-button-disabled" );
 
 	element = $( "#button" ).button({ disabled: true });
 
@@ -21,36 +20,32 @@ test( "disabled, explicit value", function( assert ) {
 	ok( !element.button( "widget" ).attr( "aria-disabled" ), "element does not get aria-disabled" );
 	assert.hasClasses( element.button( "widget" ), "ui-button-disabled" );
 
-	deepEqual( element.button( "option", "disabled" ), true, "disabled option set to true" );
-	deepEqual( element.prop( "disabled" ), true, "Disabled property is set" );
+	ok( element.button( "option", "disabled" ), "disabled option set to true" );
+	ok( element.prop( "disabled" ), "Disabled property is set" );
 });
 
 // We are testing the default here because the default null is a special value which means to check
-// the DOM, so we need to make sure this happens correctly checking the options should never return
-// null. It should always be true or false
+// the DOM. We need to make sure this happens correctly. Checking the options should never return
+// null, it should always be true or false.
 test( "disabled, null", function() {
 	expect( 4 );
 	var element = $( "#button" ),
 		elementDisabled = $( "#button-disabled" );
 	element.add( elementDisabled ).button({ disabled: null });
-	strictEqual( element.button("option", "disabled"), false,
-		"disabled option set to false");
-	strictEqual( element.prop("disabled"), false, "element is disabled");
-	strictEqual( elementDisabled.button("option", "disabled"), true,
-		"disabled option set to false");
-	strictEqual( elementDisabled.prop("disabled"), true, "element is disabled");
+	ok( !element.button( "option", "disabled" ), "disabled option set to false" );
+	ok( !element.prop( "disabled" ), "element is disabled" );
+	ok( elementDisabled.button( "option", "disabled" ), "disabled option set to true" );
+	ok( elementDisabled.prop( "disabled" ), "element is disabled" );
 });
 
 test( "showLabel, false, without icon", function( assert ) {
 	expect( 1 );
 
-	var button = $( "#button" );
-	button.button({
-		showLabel: false
-	});
-	assert.hasClasses( button, "ui-corner-all ui-widget" );
+	var button = $( "#button" ).button({
+			showLabel: false
+		});
 
-	button.button( "destroy" );
+	assert.hasClasses( button, "ui-corner-all ui-widget" );
 });
 
 test( "showLabel, false, with icon", function( assert ) {
@@ -59,8 +54,7 @@ test( "showLabel, false, with icon", function( assert ) {
 		showLabel: false,
 		icon: "iconclass"
 	});
-	assert.hasClasses( $( "#button" ), "ui-button ui-corner-all ui-widget ui-button-icon-only",
-		true, "Button has correct classes" );
+	assert.hasClasses( $( "#button" ), "ui-button ui-corner-all ui-widget ui-button-icon-only" );
 });
 
 test( "label, default", function() {

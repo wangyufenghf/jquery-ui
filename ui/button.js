@@ -38,26 +38,26 @@ var formResetHandler = function() {
 		// Wait for the form reset to actually happen before refreshing
 		setTimeout( function() {
 
-			// We find .ui-button first then filter by :ui-button because doing a
-			// widget pseudo selectors are very very slow but we need to filter out
-			// css only buttons
+			// We find .ui-button first, then filter by :ui-button,
+			// because widget pseudo selectors are very very slow, but
+			// we need to filter out CSS-only buttons
 			form.find( ".ui-button" ).filter( ":ui-button" ).button( "refresh" );
 		} );
 	},
-	buttonCount = 0;
+	forms = {};
 
 $.widget( "ui.button", {
 	version: "@VERSION",
 	defaultElement: "<button>",
 	options: {
+		classes: {
+			"ui-button": "ui-corner-all"
+		},
 		disabled: null,
 		showLabel: true,
 		label: null,
 		icon: null,
-		iconPosition: "beginning",
-		classes: {
-			"ui-button": "ui-corner-all"
-		}
+		iconPosition: "beginning"
 	},
 
 	_getCreateOptions: function() {
@@ -80,22 +80,26 @@ $.widget( "ui.button", {
 	},
 
 	_create: function() {
-		this.formElement = $( this.element[ 0 ].form );
+		this.formElement = $( this.element[ 0 ].form ).uniqueId();
+		this.formId = this.formElement.attr( "id" );
 
-		// We don't use _on and _off here because we want all the buttons in the same form to use
-		// single handler which handles all the button widgets in the form
-		this.formElement.off( "reset." + this.widgetFullName, formResetHandler );
-		this.formElement.on( "reset." + this.widgetFullName, formResetHandler );
-		buttonCount++;
+		forms[ this.formId ] = forms[ this.formId ] || 0;
 
-		// We have to check the option again here even though we did in _getCreateOptions
+		// We don't use _on and _off here because we want all the checkboxes in the same form to use
+		// single handler which handles all the checkboxradio widgets in the form
+		if ( forms[ this.formId ] === 0 ) {
+			this.formElement.on( "reset." + this.widgetFullName, formResetHandler );
+		}
+		forms[ this.formId ]++;
+
+		// We have to check the option again here even though we did in _getCreateOptions,
 		// because null may have been passed on init which would override what was set in
 		// _getCreateOptions
 		if ( this.options.disabled == null ) {
 			this.options.disabled = this.element[ 0 ].disabled || false;
 		}
 
-		this.hasTitle = this.element.attr( "title" );
+		this.hasTitle = !!this.element.attr( "title" );
 		this._enhance();
 
 		if ( this.element.is( "a" ) ) {
@@ -113,7 +117,7 @@ $.widget( "ui.button", {
 	_enhance: function() {
 		this._setOption( "disabled", this.options.disabled );
 
-		this._addClass( "ui-button", " ui-widget" );
+		this._addClass( "ui-button", "ui-widget" );
 		this.element.attr( "role", "button" );
 
 		// Check to see if the label needs to be set or if its already correct
@@ -125,7 +129,8 @@ $.widget( "ui.button", {
 			}
 		}
 		if ( this.options.icon ) {
-			this._updateIcon( this.options.icon )._updateTooltip();
+			this._updateIcon( this.options.icon );
+			this._updateTooltip();
 		}
 	},
 
@@ -138,29 +143,30 @@ $.widget( "ui.button", {
 	},
 
 	_updateIcon: function( icon ) {
-		var prepend = ( this.options.iconPosition === "top" || this.options.iconPosition === "beginning" ),
-			displayBlock = ( this.options.iconPosition === "top" ||
-				this.options.iconPosition === "bottom" );
+		var displayBlock = this.options.iconPosition === "top" ||
+				this.options.iconPosition === "bottom";
+
 		if ( !this.icon ) {
 			this.icon = $( "<span>" );
-			this.iconSpace = $( "<span> </span>" );
 
-			this._addClass( this.icon, "ui-button-icon", " ui-icon" );
+			this._addClass( this.icon, "ui-button-icon", "ui-icon" );
 
 			if ( !this.options.showLabel ) {
 				this._addClass( "ui-button-icon-only" );
 			} else if ( displayBlock ) {
-				this._addClass( this.icon, null, "ui-icon-display-block" );
+				this._addClass( this.icon, null, "ui-widget-icon-block" );
 			}
 		} else {
 			this._removeClass( this.icon, null, this.options.icon );
 		}
 		this._addClass( this.icon, null, icon );
-		this.icon[ prepend ? "prependTo" : "appendTo" ]( this.element );
+		this.element[ this._getAttachMethod() ]( this.icon );
 		if ( !displayBlock ) {
-			this.icon[ prepend ? "after" : "before" ]( this.iconSpace );
+			if ( !this.iconSpace ) {
+				this.iconSpace = $( "<span> </span>" );
+			}
+			this.icon[ this._getAttachMethod( true ) ]( this.iconSpace );
 		}
-		return this;
 	},
 
 	_destroy: function() {
@@ -168,42 +174,46 @@ $.widget( "ui.button", {
 
 		if ( this.icon ) {
 			this.icon.remove();
+		}
+		if ( this.iconSpace ) {
 			this.iconSpace.remove();
 		}
 		if ( !this.hasTitle ) {
 			this.element.removeAttr( "title" );
 		}
-		buttonCount--;
-		if ( buttonCount === 0 ) {
+
+		forms[ this.formId ]--;
+		if ( forms[ this.formId ] === 0 ) {
 			this.formElement.off( "reset." + this.widgetFullName, formResetHandler );
 		}
 	},
 
-	_setOption: function( key, value ) {
-		var iconGroup,
-			prepend = ( this.options.iconPosition === "top" || this.options.iconPosition === "beginning" );
+	_getAttachMethod: function( space ) {
+		return this.options.iconPosition === "top" || this.options.iconPosition === "beginning" ?
+			space ? "before" : "prepend" :
+			space ? "after" : "append";
+	},
 
-		if ( key === "icon" ) {
+	_setOption: function( key, value ) {
+		var iconGroup;
+
+		if ( key === "icon" || key === "iconPosition" ) {
 			if ( value !== null ) {
 				this._updateIcon( value );
 			} else {
 				this.icon.remove();
 				this.iconSpace.remove();
-				this._removeClass( "ui-button-icon", " ui-icon-" + this.options.iconPosition );
 			}
 		}
 
-		// Make sure we can't end up with a button that has no text nor icon
+		// Make sure we can't end up with a button that has neither text nor icon
 		if ( key === "showLabel" ) {
-			if ( ( !value && this.options.icon ) || value ) {
+			if ( this.options.icon || value ) {
 				this._toggleClass( this._classes( "ui-button-icon-only" ), null, !value );
 				this._updateTooltip();
 			} else {
 				value = true;
 			}
-		}
-		if ( key === "iconPosition" && this.options.icon ) {
-			this._addClass( null, value );
 		}
 		if ( key === "label" ) {
 			if ( this.isInput ) {
@@ -215,7 +225,7 @@ $.widget( "ui.button", {
 				this.element.html( value );
 				if ( !!this.icon ) {
 					iconGroup = this.icon.add( this.iconSpace );
-					this.element[ prepend ? "prepend" : "append" ]( iconGroup );
+					this.element[ this._getAttachMethod() ]( iconGroup );
 				}
 			}
 		}
