@@ -285,12 +285,8 @@ return $.widget( "ui.spinner", {
 
 	_buttonHtml: function() {
 		return "" +
-			"<a>" +
-			"<span>&#9650;</span>" +
-			"</a>" +
-			"<a>" +
-			"<span>&#9660;</span>" +
-			"</a>";
+			"<a><span>&#9650;</span></a>" +
+			"<a><span>&#9660;</span></a>";
 	},
 
 	_start: function( event ) {
