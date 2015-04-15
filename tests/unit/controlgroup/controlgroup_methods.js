@@ -75,9 +75,9 @@ test( "refresh", function() {
 					name + ": " + widget + " " + i + ": is a " + widget + " widget after refresh" );
 			}
 			checkCornerClasses( classes );
-			interateHidden( true );
+			iterateHidden( true );
 			element.controlgroup( "option", "excludeInvisible", false );
-			interateHidden();
+			iterateHidden();
 
 			controls[ 0 ].prop( "disabled", true );
 
@@ -91,7 +91,7 @@ test( "refresh", function() {
 			function showElement( index, value ) {
 				$( value )[ widget ]( "widget" ).show();
 			}
-			function interateHidden( excludeInvisible ) {
+			function iterateHidden( excludeInvisible ) {
 				for ( i = 0; i < 4; i++ ) {
 					$.each( controls, showElement );
 					controls[ i ][ widget ]( "widget" ).hide();

@@ -54,9 +54,9 @@ $.widget( "ui.test", {
 	_create: function (){
 		this.element.addClass( "ui-test ui-button" );
 	},
-	refresh: function() {
-		return;
-	}
+
+	// Controlgroup requires a refresh method to exist
+	refresh: $.noop
 });
 test( "items: custom widget", function() {
 	expect( 2 );
