@@ -13,7 +13,7 @@
 //>>docs: http://api.jqueryui.com/selectmenu/
 //>>demos: http://jqueryui.com/selectmenu/
 //>>css.structure: ../themes/base/core.css
-//>>css.structure: ../themes/base/selectmenu.css
+//>>css.structure: ../themes/base/selectmenu.css, ../themes/base/button.css
 //>>css.theme: ../themes/base/theme.css
 
 ( function( factory ) {
@@ -119,7 +119,7 @@ return $.widget( "ui.selectmenu", {
 
 		icon = $( "<span>" ).prependTo( this.button );
 		space = $( "<span> </span>" );
-		this._addClass( space, "ui-selectmenu-button-space" );
+		this._addClass( space, "ui-selectmenu-icon-space" );
 		this._addClass( icon, null, "ui-icon " + this.options.icons.button );
 		icon.after( space );
 
