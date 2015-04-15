@@ -6,21 +6,21 @@
 
 module( "Checkboxradio: options" );
 
-function assertDisabled( widget, checkbox ) {
-	QUnit.assert.hasClasses( widget, "ui-state-disabled",
+function assertDisabled( widget, checkbox, assert ) {
+	assert.hasClasses( widget, "ui-state-disabled",
 		"label gets ui-state-disabled" );
 	strictEqual( checkbox.is( ":disabled" ), true,
 		"checkbox is disabled" );
 }
 
-function assertEnabled( widget, checkbox ) {
-	QUnit.assert.lacksClasses(  widget, "ui-state-disabled",
+function assertEnabled( widget, checkbox, assert ) {
+	assert.lacksClasses(  widget, "ui-state-disabled",
 		"label has ui-state-disabled removed when disabled set to false" );
 	strictEqual( checkbox.is( ":disabled" ), false,
 		"checkbox has disabled prop removed when disabled set to false" );
 }
 
-test( "disabled", function() {
+test( "disabled", function( assert ) {
 	var checkbox = $( "#checkbox-option-disabled" ),
 		widget;
 	expect( 6 );
@@ -29,15 +29,15 @@ test( "disabled", function() {
 	});
 
 	widget = checkbox.checkboxradio( "widget" );
-	assertDisabled( widget, checkbox );
+	assertDisabled( widget, checkbox, assert );
 
 	checkbox.checkboxradio( "option", "disabled", false );
-	assertEnabled( widget, checkbox );
+	assertEnabled( widget, checkbox, assert  );
 
 	checkbox.checkboxradio( "option", "disabled", true );
-	assertDisabled( widget, checkbox );
+	assertDisabled( widget, checkbox, assert );
 });
-test( "disabled - prop true on init", function() {
+test( "disabled - prop true on init", function( assert ) {
 	expect( 2 );
 	var checkbox = $( "#checkbox-option-disabled" ),
 		widget;
@@ -46,9 +46,9 @@ test( "disabled - prop true on init", function() {
 	checkbox.checkboxradio();
 	widget = checkbox.checkboxradio( "widget" );
 
-	assertDisabled( widget, checkbox );
+	assertDisabled( widget, checkbox, assert );
 });
-test( "disabled - explicit null value", function() {
+test( "disabled - explicit null value", function( assert ) {
 	expect( 2 );
 	var checkbox = $( "#checkbox-option-disabled" ),
 		widget;
@@ -58,7 +58,7 @@ test( "disabled - explicit null value", function() {
 		disabled: null
 	});
 	widget = checkbox.checkboxradio( "widget" );
-	assertDisabled( widget, checkbox );
+	assertDisabled( widget, checkbox, assert );
 });
 
 function assertNoIcon( widget ) {
