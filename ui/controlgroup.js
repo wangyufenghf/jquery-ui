@@ -35,15 +35,14 @@ return $.widget( "ui.controlgroup", {
 			"selectmenu": "select"
 		},
 		direction: "horizontal",
-		excludeInvisible: true,
-		classes: {}
+		excludeInvisible: true
 	},
 
 	_create: function() {
 		this._enhance();
 	},
 
-	// The support the enhanced option in jQuery Mobile, we isolate DOM manipulation
+	// To support the enhanced option in jQuery Mobile, we isolate DOM manipulation
 	_enhance: function() {
 		this.element.attr( "role", "toolbar" );
 		this.refresh();
@@ -52,8 +51,8 @@ return $.widget( "ui.controlgroup", {
 	_destroy: function() {
 		var that = this;
 		$.each( this.options.items, function( widget, selector ) {
-			that.element.children( selector ).map( function() {
-				return $( this )[ widget ]( "widget" ).removeData( "ui-controlgroup-data" )[ 0 ];
+			that.element.find( selector ).map( function() {
+				return $( this )[ widget ]( "widget" )[ 0 ];
 			} ).removeData( "ui-controlgroup-data" );
 		} );
 		this._callChildMethod( "destroy" );
@@ -63,24 +62,41 @@ return $.widget( "ui.controlgroup", {
 	_callChildMethod: function( method ) {
 		var that = this;
 
-		this.buttons = $();
+		this.childWidgets = $();
+
+		// First we iterate over each of the items options
 		$.each( this.options.items, function( widget, selector ) {
-			var options = {};
+			var widgets,
+				options = {};
+
+			// We assume everything is in the middle to start cant determin
+			// first last until all enhancment is done
 			if ( that[ "_" + widget + "_options" ] ) {
 				options = that[ "_" + widget + "_options" ]( "middle" );
 			}
+
+			// Make sure the widget actually exists and has a selector set
 			if ( $.fn[ widget ] && selector ) {
-				that.element
-					.find( selector )[ widget ]( method ? method : options )
-						.each( function() {
-							if ( method !== "destroy" ) {
-								var button = $( this )[ widget ]( "widget" ).data( "ui-controlgroup-data", {
-									"widgetType": widget,
-									"element": $( this )
-								} );
-								that.buttons = that.buttons.add( button );
-							}
-						} );
+
+				// Find instances of this widget inside controlgroup and run method or set options
+				widgets = that.element.find( selector )[ widget ]( method ? method : options );
+
+				// Don't set data or add to the collection if the method is destroy
+				if (  method !== "destroy" )	{
+					widgets.each( function() {
+
+						// Set data on the widget element pointing to the this.element of the widget
+						// and telling us what type of widget this is
+						var widgetElement =
+							$( this )[ widget ]( "widget" ).data( "ui-controlgroup-data", {
+								"widgetType": widget,
+								"element": $( this )
+							} );
+
+						// Add the current widget to the collection for tracking
+						that.childWidgets = that.childWidgets.add( widgetElement );
+					} );
+				}
 			}
 		} );
 	},
@@ -111,7 +127,7 @@ return $.widget( "ui.controlgroup", {
 
 	_selectmenu_options: function( position, direction ) {
 		return {
-			width: "auto",
+			width: direction ? "auto" : false,
 			classes: {
 				middle: {
 					"ui-selectmenu-button-open": null,
@@ -156,12 +172,17 @@ return $.widget( "ui.controlgroup", {
 		this._addClass( "ui-controlgroup ui-controlgroup-" + this.options.direction );
 		this._callChildMethod();
 
-		children = this.buttons;
+		children = this.childWidgets;
 
+		// We filter here because we need to track all childWidgets not just the visible ones
 		if ( this.options.excludeInvisible ) {
 			children = children.filter( ":visible" );
 		}
+
 		if ( children.length ) {
+
+			// We do this last because we need to make sure all enhancment is done
+			// before determining first and last
 			[ "first", "last" ].forEach( function( value ) {
 				var data = children[ value ]().data( "ui-controlgroup-data" );
 				if ( that[ "_" + data.widgetType + "_options" ] ) {
@@ -173,6 +194,8 @@ return $.widget( "ui.controlgroup", {
 					);
 				}
 			} );
+
+			// Finally call the refresh method on each of the child widgets.
 			this._callChildMethod( "refresh" );
 		}
 	}

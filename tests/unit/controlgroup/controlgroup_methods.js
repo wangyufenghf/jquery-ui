@@ -10,7 +10,7 @@ test( "disable", function( assert ) {
 	expect( 2 );
 	var element = $( ".controlgroup" ).controlgroup().controlgroup( "disable" );
 	assert.lacksClasses( element, "ui-state-disabled",
-		"ui-state-disabled is not present on widget after disabling" );
+		"The widget does not get the disabled class we disable each child widget" );
 	strictEqual( element.find( ".ui-state-disabled" ).length, 6,
 		"Child widgets are disabled" );
 });
@@ -32,8 +32,7 @@ function hasCornerClass( element, className ) {
 	return !!element.attr( "class" ).match( /ui-corner/g );
 }
 test( "refresh", function() {
-	var count = 0,
-		tests = {
+	var tests = {
 			"checkboxradio": "<input type='checkbox'>",
 			"selectmenu": "<select><option>foo</option></select>",
 			"button": "<button>"
@@ -53,9 +52,10 @@ test( "refresh", function() {
 			]
 		};
 
+	expect( 246 );
+
 	$.each( tests, function( widget, html ) {
 		$.each( orientations, function( name, classes ) {
-			count += 41;
 			var i, control, currentClasses,
 				controls = [],
 				element = $( "<div>" ).controlgroup({
@@ -87,7 +87,7 @@ test( "refresh", function() {
 				"Checkbox has ui-state-disabled after adding disabled prop and refreshing control group" );
 
 			element.remove();
-			expect( count );
+
 			function showElement( index, value ) {
 				$( value )[ widget ]( "widget" ).show();
 			}
