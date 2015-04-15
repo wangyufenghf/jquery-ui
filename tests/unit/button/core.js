@@ -13,16 +13,17 @@ test( "input type submit, don't create child elements", function() {
 	equal( input.children().length, 0 );
 });
 
-asyncTest( "Disabled button maintains ui-state-focus", function() {
-	expect( 1 );
+asyncTest( "Disabled button loses focus", function() {
+	expect( 2 );
 	var element = $( "#button" ).button();
-	element.simulate( "focus" );
+
+	element.focus();
 	setTimeout(function() {
 
-		// Todo: figure out why this fails in phantom put passes in browser
-		// ok( element.is( ":focus" ), "Button is focused" );
+		ok( element.is( document.activeElement ), "Button is focused" );
+
 		element.button( "disable" );
-		ok( !element.is( ":focus" ), "Button has had focus removed" );
+		ok( !element.is( document.activeElement ), "Button has had focus removed" );
 		start();
 	});
 });
