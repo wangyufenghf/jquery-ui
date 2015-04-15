@@ -26,12 +26,16 @@
 
 var formResetHandler = function() {
 		var form = $( this );
+
+		// Wait for the form reset to actually happen before refreshing
 		setTimeout( function() {
+
+			// We dont filter for css only versions since css only is not supported
 			form.find( ".ui-checkboxradio" ).checkboxradio( "refresh" );
 		} );
 	},
 	escapeId = new RegExp( /([!"#$%&'()*+,./:;<=>?@[\]^`{|}~])/g ),
-	widgetCount = 0;
+	forms = {};
 
 $.widget( "ui.checkboxradio", {
 	version: "@VERSION",
@@ -45,8 +49,6 @@ $.widget( "ui.checkboxradio", {
 		}
 	},
 
-	defaultElement: "<input type='checkbox'>",
-
 	_getCreateOptions: function() {
 		var disabled,
 			that = this,
@@ -54,14 +56,22 @@ $.widget( "ui.checkboxradio", {
 
 		// We read the type here, because it makes more sense to throw a element type error first,
 		// rather then the error for lack of a label. Often if its the wrong type, it
-		// won't have a label ( eg: calling on a div, btn, etc )
+		// won't have a label (e.g. calling on a div, btn, etc)
 		this._readType();
-		this._readLabel();
+		this._findLabel();
 
 		this.originalLabel = "";
+
+		// We need to get the label text but this may also need to make sure it does not contain the
+		// input itself.
 		this.label.contents().not( this.element ).each( function() {
-			that.originalLabel += ( this.nodeType === 3 ) ? $( this ).text() : this.outerHTML;
+
+			// The label contents could be text html or a mix we concat each element to get a string
+			// representation of the label without the input as part of it.
+			that.originalLabel += this.nodeType === 3 ? $( this ).text() : this.outerHTML;
 		} );
+
+		// Set the label option if we found label text
 		if ( this.originalLabel ) {
 			options.label = this.originalLabel;
 		}
@@ -74,13 +84,17 @@ $.widget( "ui.checkboxradio", {
 	},
 
 	_create: function() {
-		this.formElement = $( this.element[ 0 ].form );
+		this.formElement = $( this.element[ 0 ].form ).uniqueId();
+		this.formId = this.formElement.attr( "id" );
+
+		forms[ this.formId ] = forms[ this.formId ] || 0;
 
 		// We don't use _on and _off here because we want all the checkboxes in the same form to use
 		// single handler which handles all the checkboxradio widgets in the form
-		this.formElement.off( "reset." + this.widgetFullName, formResetHandler );
-		this.formElement.on( "reset." + this.widgetFullName, formResetHandler );
-		widgetCount++;
+		if ( forms[ this.formId ] === 0 ) {
+			this.formElement.on( "reset." + this.widgetFullName, formResetHandler );
+		}
+		forms[ this.formId ]++;
 
 		if ( this.options.disabled == null ) {
 			this.options.disabled = this.element[ 0 ].disabled || false;
@@ -99,7 +113,7 @@ $.widget( "ui.checkboxradio", {
 		} );
 	},
 
-	_readLabel: function() {
+	_findLabel: function() {
 		var ancestor, labelSelector, id,
 			parent = this.element.closest( "label" );
 
@@ -229,20 +243,26 @@ $.widget( "ui.checkboxradio", {
 			this.iconSpace.remove();
 		}
 
-		widgetCount--;
-		if ( widgetCount === 0 ) {
+		forms[ this.formId ]--;
+		if ( forms[ this.formId ] === 0 ) {
 			this.formElement.off( "reset." + this.widgetFullName, formResetHandler );
 		}
 	},
 
 	_setOption: function( key, value ) {
-		if ( key === "label" && value === null ) {
-			return this._super( key, this.options[ key ] );
+
+		// We don't alow the value to be set to nothing
+		if ( key === "label" && !value ) {
+			return;
 		}
+
 		this._super( key, value );
+
 		if ( key === "disabled" ) {
 			this._toggleClass( this.label, null, "ui-state-disabled", value );
 			this.element[ 0 ].disabled = value;
+
+			// Don't refresh if disabled
 			return;
 		}
 		this.refresh();
@@ -278,9 +298,12 @@ $.widget( "ui.checkboxradio", {
 	refresh: function() {
 		var checked = this.element[ 0 ].checked,
 			isDisabled = this.element[ 0 ].disabled;
+
 		this._updateIcon( checked );
 		this._toggleClass( this.label, "ui-checkboxradio-checked", "ui-state-active", checked );
 		if ( this.options.label !== null ) {
+
+			// Remove the contents of the label ( minus the icon, icon space, and input )
 			this.label.contents().not( this.element.add( this.icon ).add( this.iconSpace ) ).remove();
 			this.label.append( this.options.label );
 

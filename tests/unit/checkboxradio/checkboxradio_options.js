@@ -29,15 +29,12 @@ test( "disabled", function() {
 	});
 
 	widget = checkbox.checkboxradio( "widget" );
-
 	assertDisabled( widget, checkbox );
 
 	checkbox.checkboxradio( "option", "disabled", false );
-
 	assertEnabled( widget, checkbox );
 
 	checkbox.checkboxradio( "option", "disabled", true );
-
 	assertDisabled( widget, checkbox );
 });
 test( "disabled - prop true on init", function() {
@@ -57,12 +54,10 @@ test( "disabled - explicit null value", function() {
 		widget;
 
 	checkbox.prop( "disabled", true );
-
 	checkbox.checkboxradio({
 		disabled: null
 	});
 	widget = checkbox.checkboxradio( "widget" );
-
 	assertDisabled( widget, checkbox );
 });
 
@@ -70,11 +65,11 @@ function assertNoIcon( widget ) {
 	strictEqual( widget.find( "span.ui-icon" ).length, 0,
 		"Label does not contain an icon" );
 }
-function assertIcon( widget, icon ) {
+function assertIcon( widget, icon, assert ) {
 	icon = icon || "blank";
 	strictEqual( widget.find( ".ui-icon" ).length, 1,
 		"Label contains icon" );
-	QUnit.assert.hasClasses( widget.find( ".ui-icon" ), "ui-checkboxradio-icon ui-corner-all ui-icon " +
+	assert.hasClasses( widget.find( ".ui-icon" ), "ui-checkboxradio-icon ui-corner-all ui-icon " +
 		"ui-icon-background ui-icon-" + icon,
 		"Icon has proper classes" );
 }
@@ -85,13 +80,11 @@ test( "icon - false on init", function() {
 	expect( 1 );
 
 	checkbox.checkboxradio({ icon: false });
-
 	widget = checkbox.checkboxradio( "widget" );
-
 	assertNoIcon( widget );
 });
 
-test( "icon - default unchecked", function() {
+test( "icon - default unchecked", function( assert ) {
 	var checkbox = $( "#checkbox-option-icon" ),
 		widget;
 
@@ -99,10 +92,9 @@ test( "icon - default unchecked", function() {
 
 	checkbox.checkboxradio();
 	widget = checkbox.checkboxradio( "widget" );
-
-	assertIcon( widget );
+	assertIcon( widget, false, assert );
 });
-test( "icon", function(){
+test( "icon", function( assert ){
 	var checkbox = $( "#checkbox-option-icon" ),
 		widget;
 
@@ -112,25 +104,20 @@ test( "icon", function(){
 
 	checkbox.checkboxradio();
 	widget = checkbox.checkboxradio( "widget" );
-
-	assertIcon( widget, "check" );
+	assertIcon( widget, "check", assert );
 
 	checkbox.checkboxradio( "option", "icon", false );
-
 	assertNoIcon( widget );
 
 	checkbox.checkboxradio( "option", "icon", true );
-
-	assertIcon( widget, "check" );
+	assertIcon( widget, "check", assert );
 
 	checkbox.prop( "checked", false ).checkboxradio( "refresh" );
 	checkbox.checkboxradio( "option", "icon", false );
-
 	assertNoIcon( widget );
 
 	checkbox.checkboxradio( "option", "icon", true );
-
-	assertIcon( widget );
+	assertIcon( widget, false, assert );
 
 });
 function getLabelText( label, element ) {
@@ -147,9 +134,7 @@ test( "label - default", function() {
 	expect( 2 );
 
 	checkbox.checkboxradio();
-
 	widget = checkbox.checkboxradio( "widget" );
-
 	strictEqual( checkbox.checkboxradio( "option", "label" ),
 		"checkbox label", "When no value passed on create text from dom is used for option" );
 	strictEqual( getLabelText( widget, checkbox ),
@@ -164,9 +149,7 @@ test( "label - explicit value", function() {
 	checkbox.checkboxradio({
 		label: "foo"
 	});
-
 	widget = checkbox.checkboxradio( "widget" );
-
 	strictEqual( checkbox.checkboxradio( "option", "label" ),
 		"foo", "When value is passed on create value is used for option" );
 	strictEqual( getLabelText( widget, checkbox ),
@@ -186,9 +169,7 @@ test( "label - explicit null value", function() {
 	checkbox.checkboxradio({
 		label: null
 	});
-
 	widget = checkbox.checkboxradio( "widget" );
-
 	strictEqual( checkbox.checkboxradio( "option", "label" ),
 		"checkbox label", "When null is passed on create text from dom is used for option" );
 	strictEqual( getLabelText( widget, checkbox ),
@@ -204,16 +185,13 @@ test( "label", function() {
 
 	checkbox.checkboxradio();
 	widget = checkbox.checkboxradio( "widget" );
-
 	checkbox.checkboxradio( "option", "label", "bar" );
-
 	strictEqual( checkbox.checkboxradio( "option", "label" ),
 		"bar", "When value is passed value is used for option" );
 	strictEqual( getLabelText( widget, checkbox ),
 		"bar", "When value is passed value is used in dom" );
 
 	checkbox.checkboxradio( "option", "label", null );
-
 	strictEqual( checkbox.checkboxradio( "option", "label" ),
 		"bar", "When null is passed text from dom is used for option" );
 	strictEqual( getLabelText( widget, checkbox ),

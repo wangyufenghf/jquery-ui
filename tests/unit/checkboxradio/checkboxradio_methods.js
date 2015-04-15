@@ -4,8 +4,8 @@
 
 
 (function($) {
-
 module( "Checkboxradio: methods" );
+
 test( "Checkbox: refresh", function( assert ) {
 	var widget, icon,
 		checkbox = $( "#checkbox-method-refresh" );
@@ -13,9 +13,10 @@ test( "Checkbox: refresh", function( assert ) {
 	checkbox.checkboxradio();
 
 	widget = checkbox.checkboxradio( "widget" );
-	strictEqual( widget.find( ".ui-icon" ).length, 1,
+	icon = widget.find( ".ui-icon" );
+	strictEqual( icon.length, 1,
 		"There is initally one icon" );
-	widget.find( ".ui-icon" ).eq( 0 ).remove();
+	icon.remove();
 	checkbox.checkboxradio( "refresh" );
 	icon = widget.find( ".ui-icon" );
 	strictEqual( icon.length, 1,
@@ -113,16 +114,14 @@ test( "Radio: disable / enable", function( assert ) {
 		widget = radio.checkboxradio().checkboxradio( "widget" );
 
 	expect( 4 );
+
 	radio.checkboxradio( "disable" );
-	assert.hasClasses( widget, "ui-state-disabled",
-		"label gets ui-state-disabled when disable is called" );
-	strictEqual( radio.is( ":disabled" ), true,
-		"checkbox is disabled when disable is called" );
+	assert.hasClasses( widget, "ui-state-disabled" );
+	strictEqual( radio.is( ":disabled" ), true );
+
 	radio.checkboxradio( "enable" );
-	assert.lacksClasses( widget, "ui-state-disabled",
-		"label has ui-state-disabled removed when enable is called" );
-	strictEqual( radio.is( ":disabled" ), false,
-		"checkbox has disabled prop removed when enable is called" );
+	assert.lacksClasses( widget, "ui-state-disabled" );
+	strictEqual( radio.is( ":disabled" ), false );
 });
 test( "Radio: widget returns the label", function(){
 	var radio = $( "#radio-method-refresh" ),

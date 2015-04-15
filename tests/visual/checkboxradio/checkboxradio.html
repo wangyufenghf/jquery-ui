@@ -2,34 +2,29 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>jQuery UI Button - Checkboxes</title>
+	<title>jQuery UI - Checkboxes</title>
 	<link rel="stylesheet" href="../../../themes/base/all.css">
 	<script src="../../../external/jquery/jquery.js"></script>
 	<script src="../../../ui/core.js"></script>
 	<script src="../../../ui/widget.js"></script>
 	<script src="../../../ui/button.js"></script>
 	<script src="../../../ui/checkboxradio.js"></script>
-	<link rel="stylesheet" href="../demos.css">
 	<script>
 	$(function() {
 		var checkboxes = $( "form input" ).checkboxradio();
 
-		$( ".controls input, .controls select" ).on( "change keyup", function(){
+		$( ".controls input, .controls select" ).on( "change keyup", function() {
 			var option = $( this ).attr( "name" ),
 				value = $( this ).val();
 
-			if( $( this ).is( "[type=checkbox] ") ) {
-				if ( $( this ).is(":checked") ) {
-					value = true;
-				} else {
-					value = false;
-				}
+			if ( $( this ).is( "[type=checkbox]" ) ) {
+				value = $( this ).is( ":checked" );
 			}
 			if ( option != "label" || value !== "" ) {
 				checkboxes.checkboxradio( "option", option, value );
 			}
 		});
-		$( ".controls>button" ).click( function(){
+		$( ".controls > button" ).click( function() {
 			if ( this.id !== "create" ) {
 				checkboxes.checkboxradio( this.id );
 			} else {
@@ -43,9 +38,10 @@
 	</style>
 </head>
 <body>
-<div class="demo-description">
-	css for new checkbox widget
-</div>
+<h2>
+	Easy way to toggle through various combinations of options and states to make sure non lead to
+	a broken appearence.
+</h2>
 <div class="controls">
 	<button id="create">Create</button>
 	<button id="destroy">Destroy</button>

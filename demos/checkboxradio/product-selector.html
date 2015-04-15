@@ -29,7 +29,7 @@
 		$( "[name='brand']").on( "change", function(){
 			$( "input" ).filter( ":checked" ).not( this ).trigger( "change" );
 		});
-		$( "input" ).filter( ":checked" ).not( this ).trigger( "change" );
+		$( "input" ).filter( ":checked" ).trigger( "change" );
 		$( ".shape-bar" ).controlgroup();
 		$( ".toggles" ).controlgroup({
 			direction: "vertical"
