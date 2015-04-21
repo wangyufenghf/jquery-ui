@@ -144,9 +144,10 @@ $.widget( "ui.button", {
 		}
 	},
 
-	_updateIcon: function( icon ) {
-		var displayBlock = this.options.iconPosition === "top" ||
-				this.options.iconPosition === "bottom";
+	_updateIcon: function( value, option ) {
+		var icon = option !== "iconPosition",
+			position = icon ? this.options.iconPosition : value,
+			displayBlock = position === "top" || position === "bottom";
 
 		if ( !this.icon ) {
 			this.icon = $( "<span>" );
@@ -155,19 +156,28 @@ $.widget( "ui.button", {
 
 			if ( !this.options.showLabel ) {
 				this._addClass( "ui-button-icon-only" );
-			} else if ( displayBlock ) {
-				this._addClass( this.icon, null, "ui-widget-icon-block" );
 			}
-		} else {
+		} else if ( icon ) {
 			this._removeClass( this.icon, null, this.options.icon );
+			if ( displayBlock ) {
+				this._removeClass( this.icon, null, "ui-wiget-icon-block" );
+			}
 		}
-		this._addClass( this.icon, null, icon );
-		this.element[ this._getAttachMethod() ]( this.icon );
+		if ( icon ) {
+			this._addClass( this.icon, null, value );
+		}
+		this.element[ this._getAttachMethod( false, icon ? undefined : value ) ]( this.icon );
 		if ( !displayBlock ) {
 			if ( !this.iconSpace ) {
 				this.iconSpace = $( "<span> </span>" );
+				this._addClass( this.iconSpace, "ui-button-icon-space" );
 			}
-			this.icon[ this._getAttachMethod( true ) ]( this.iconSpace );
+			this.icon[ this._getAttachMethod( true, icon ? undefined : value ) ]( this.iconSpace );
+		} else {
+			this._addClass( this.icon, null, "ui-widget-icon-block" );
+			if( this.iconSpace ) {
+				this.iconSpace.remove();
+			}
 		}
 	},
 
@@ -190,18 +200,19 @@ $.widget( "ui.button", {
 		}
 	},
 
-	_getAttachMethod: function( space ) {
-		return this.options.iconPosition === "top" || this.options.iconPosition === "beginning" ?
-			space ? "before" : "prepend" :
-			space ? "after" : "append";
+	_getAttachMethod: function( space, position ) {
+		position = position || this.options.iconPosition;
+		return position === "top" || position === "beginning" ?
+			space ? "after" : "prepend" :
+			space ? "before" : "append";
 	},
 
 	_setOption: function( key, value ) {
 		var iconGroup;
 
 		if ( key === "icon" || key === "iconPosition" ) {
-			if ( value !== null ) {
-				this._updateIcon( value );
+			if ( value ) {
+				this._updateIcon( value, key );
 			} else {
 				this.icon.remove();
 				this.iconSpace.remove();
