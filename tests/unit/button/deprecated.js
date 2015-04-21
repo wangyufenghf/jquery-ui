@@ -1,9 +1,7 @@
-/*
- * button_core.js
- */
-
-
-(function($) {
+define( [
+	"jquery",
+	"ui/button"
+], function( $ ) {
 
 module( "Button (deprecated): core" );
 
@@ -30,9 +28,9 @@ test( "Calling buttonset calls controlgroup", function(){
 
 module( "Button (deprecated): methods" );
 
-test( "destroy", function() {
+test( "destroy", function( assert ) {
 	expect( 1 );
-	domEqual( "#checkbox02", function() {
+	assert.domEqual( "#checkbox02", function() {
 		$( "#checkbox02" ).button().button( "destroy" );
 	});
 });
@@ -194,4 +192,4 @@ test( "icon and icons options properly proxied", function(){
 		"Icons secondary option sets iconPosition option to end on init" );
 });
 
-})(jQuery);
+} );

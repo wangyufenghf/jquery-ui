@@ -23,7 +23,9 @@
 		define( [
 			"jquery",
 			"./core",
-			"./widget"
+			"./widget",
+			"./controlgroup",
+			"./checkboxradio"
 		], factory );
 	} else {
 

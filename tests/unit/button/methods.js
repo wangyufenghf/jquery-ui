@@ -5,7 +5,7 @@ define( [
 
 module( "Button: methods" );
 
-test( "destroy", function( assert) {
+test( "destroy", function( assert ) {
 	expect( 1 );
 	assert.domEqual( "#button", function() {
 		$( "#button" ).button().button( "destroy" );
