@@ -1,4 +1,12 @@
-TestHelpers.commonWidgetTests( "controlgroup", {
+define( [
+	"lib/common",
+	"ui/controlgroup",
+	"ui/checkboxradio",
+	"ui/selectmenu",
+	"ui/button"
+], function( common ) {
+
+common.testWidget( "controlgroup", {
 	defaults: {
 		disabled: null,
 		items: {
@@ -14,3 +22,5 @@ TestHelpers.commonWidgetTests( "controlgroup", {
 		create: null
 	}
 });
+
+} );

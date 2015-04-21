@@ -1,3 +1,11 @@
+define( [
+	"jquery",
+	"ui/controlgroup",
+	"ui/checkboxradio",
+	"ui/selectmenu",
+	"ui/button"
+], function( $ ) {
+
 module( "Controlgroup: Core" );
 
 function hasCornerClass( element ) {
@@ -75,3 +83,5 @@ test( "invisibles excluded from corner classes", function( assert ) {
 	assert.hasClasses( buttons.eq( 1 ), "ui-corner-left",
 		"ExcludeInvisible: true: First button is hidden second button get corner class" );
 });
+
+} );

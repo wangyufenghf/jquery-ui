@@ -1,3 +1,11 @@
+define( [
+	"jquery",
+	"ui/controlgroup",
+	"ui/checkboxradio",
+	"ui/selectmenu",
+	"ui/button"
+], function( $ ) {
+
 module( "Controlgroup: options" );
 
 function hasCornerClass( element ) {
@@ -111,3 +119,5 @@ test( "direction", function() {
 	strictEqual( buttons.last().hasClass( "ui-corner-bottom" ), true,
 		"Last visible element in vertical controlgroup gets ui-corner-bottom" );
 });
+
+} );

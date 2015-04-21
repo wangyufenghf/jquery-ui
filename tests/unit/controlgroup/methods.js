@@ -1,8 +1,16 @@
+define( [
+	"jquery",
+	"ui/controlgroup",
+	"ui/checkboxradio",
+	"ui/selectmenu",
+	"ui/button"
+], function( $ ) {
+
 module( "Controlgroup: methods" );
 
-test( "destroy", function() {
+test( "destroy", function( assert ) {
 	expect( 1 );
-	domEqual( ".controlgroup", function() {
+	assert.domEqual( ".controlgroup", function() {
 		$( ".controlgroup" ).controlgroup().controlgroup( "destroy" );
 	});
 });
@@ -118,3 +126,5 @@ test( "refresh", function() {
 		});
 	});
 });
+
+} );

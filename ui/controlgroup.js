@@ -170,6 +170,11 @@ return $.widget( "ui.controlgroup", {
 			that = this;
 
 		this._addClass( "ui-controlgroup ui-controlgroup-" + this.options.direction );
+
+		if ( this.options.direction === "horizontal" ) {
+			this._addClass( null, "ui-helper-clearfix" );
+		}
+
 		this._callChildMethod();
 
 		children = this.childWidgets;
