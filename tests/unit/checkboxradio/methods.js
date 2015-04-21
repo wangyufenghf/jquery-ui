@@ -1,9 +1,8 @@
-/*
-* checkboxradio_methods.js
-*/
+define( [
+	"jquery",
+	"ui/checkboxradio"
+], function( $ ) {
 
-
-(function($) {
 module( "Checkboxradio: methods" );
 
 $.each( [ "checkbox", "radio" ], function( index, value ) {
@@ -49,9 +48,9 @@ $.each( [ "checkbox", "radio" ], function( index, value ) {
 		assert.lacksClasses( widget, "ui-checkboxradio-checked" );
 	});
 
-	test( value + ": destroy", function(){
+	test( value + ": destroy", function( assert ){
 		expect( 1 );
-		domEqual( "#" + value + "-method-destroy", function() {
+		assert.domEqual( "#" + value + "-method-destroy", function() {
 			$( "#" + value + "-method-destroy" ).checkboxradio().checkboxradio( "destroy" );
 		});
 	});
@@ -95,4 +94,4 @@ test( "Input wrapped in a label preserved on refresh", function() {
 	strictEqual( input.parent()[ 0 ], element[ 0 ], "Input preserved" );
 });
 
-})(jQuery);
+} );

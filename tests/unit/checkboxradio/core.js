@@ -1,9 +1,7 @@
-/*
- * checkboxradio_core.js
- */
-
-
-(function($) {
+define( [
+	"jquery",
+	"ui/checkboxradio"
+], function( $ ) {
 
 module( "Checkboxradio: core" );
 test( "Checkbox - Initial class structure", function( assert ) {
@@ -178,4 +176,5 @@ test( "Calling checkboxradio on an input with no label throws an error", functio
 		"Proper error thrown"
 	);
 });
-})(jQuery);
+
+} );

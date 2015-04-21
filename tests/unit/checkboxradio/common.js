@@ -1,4 +1,9 @@
-TestHelpers.commonWidgetTests( "checkboxradio", {
+define( [
+	"lib/common",
+	"ui/checkboxradio"
+], function( common ) {
+
+common.testWidget( "checkboxradio", {
 	noDefaultElement: true,
 	defaults: {
 		disabled: null,
@@ -13,3 +18,5 @@ TestHelpers.commonWidgetTests( "checkboxradio", {
 		create: null
 	}
 });
+
+} );

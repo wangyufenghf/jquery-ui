@@ -1,8 +1,7 @@
-/*
-* checkboxradio_methods.js
-*/
-
-(function($) {
+define( [
+	"jquery",
+	"ui/checkboxradio"
+], function( $ ) {
 
 module( "Checkboxradio: options" );
 
@@ -199,4 +198,4 @@ test( "label", function() {
 
 });
 
-})(jQuery);
+} );

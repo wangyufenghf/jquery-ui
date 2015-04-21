@@ -30,7 +30,7 @@
 			$( "input" ).filter( ":checked" ).not( this ).trigger( "change" );
 		});
 		$( "input" ).filter( ":checked" ).trigger( "change" );
-		$( ".shape-bar" ).controlgroup();
+		$( ".shape-bar, .brand" ).controlgroup();
 		$( ".toggles" ).controlgroup({
 			direction: "vertical"
 		});
@@ -38,12 +38,12 @@
 	</script>
 	<style>
 		.shape {
-			margin: 1em;
+			margin-left: 4.5em;
+			margin-top: 2.5em;
 			height: 8em;
 			width: 8em;
 			box-shadow: 4px 4px 8px;
 			color: #ccc;
-			margin-top: 1.5em;
 			background-repeat: no-repeat;
 			background-size: 90%;
 			background-position: 50%;
@@ -53,6 +53,9 @@
 		}
 		.pill, .rectangle {
 			width: 16em;
+		}
+		.square, .circle {
+			margin-left: 9em;
 		}
 		.border {
 			border: 2px solid #333333;
@@ -64,9 +67,6 @@
 			display: inline-block;
 			vertical-align: top;
 		}
-		.shape-wrap {
-			margin-bottom: 2em;
-		}
 		.controls {
 			background: #ccc;
 			padding: 1em;
@@ -77,7 +77,7 @@
 <body>
 <div class="controls">
 	<div class="brand-wrap">
-		<h2>1.) Select a brand</h2>
+		<h3>1.) Select a brand</h3>
 		<div class="brand">
 			<label for="brand-jquery">jQuery</label>
 			<input data-background-color="#0769AD" data-color="#7ACEF4" data-background-image="url(images/jquery.png)" type="radio" name="brand" id="brand-jquery">
@@ -92,7 +92,7 @@
 		</div>
 	</div>
 	<div class="shape-wrap">
-		<h2>2.) Select a shape</h2>
+		<h3>2.) Select a shape</h3>
 		<div class="shape-bar">
 			<label for="shape-circle">Circle</label>
 			<input type="radio" name="shape" id="shape-circle" value="circle" checked>
@@ -105,7 +105,7 @@
 		</div>
 	</div>
 	<div class="toggle-wrap">
-		<h2>3.) customize</h2>
+		<h3>3.) Customize</h3>
 		<div class="toggles">
 			<label for="color">Shadow</label>
 			<input class="toggle brand-toggle" type="checkbox" name="color" id="color">
@@ -121,7 +121,7 @@
 </div>
 
 <div class="demo-description">
-<p>Using two sets of radio buttons and one group of checkboxes to implement a product selector.</p>
+<p>Using two sets of radio buttons, as horizontal controlgroups, and one group of checkboxes, as a vertical controlgroup, to implement a product selector.</p>
 </div>
 </body>
 </html>
