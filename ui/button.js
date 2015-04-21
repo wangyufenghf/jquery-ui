@@ -24,6 +24,9 @@
 			"jquery",
 			"./core",
 			"./widget",
+
+			// These are only for backcompat
+			// TODO: Remove after 1.12
 			"./controlgroup",
 			"./checkboxradio"
 		], factory );
@@ -93,6 +96,10 @@ $.widget( "ui.button", {
 			this.formElement.on( "reset." + this.widgetFullName, formResetHandler );
 		}
 		forms[ this.formId ]++;
+
+		if ( !this.option.showLabel & !this.options.icon ) {
+			this.options.showLabel = true;
+		}
 
 		// We have to check the option again here even though we did in _getCreateOptions,
 		// because null may have been passed on init which would override what was set in

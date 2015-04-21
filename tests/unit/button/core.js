@@ -5,14 +5,6 @@ define( [
 
 module( "Button: core" );
 
-test( "input type submit, don't create child elements", function() {
-	expect( 2 );
-	var input = $("#submit");
-	equal( input.children().length, 0 );
-	input.button();
-	equal( input.children().length, 0 );
-});
-
 asyncTest( "Disabled button loses focus", function() {
 	expect( 2 );
 	var element = $( "#button" ).button();
@@ -20,10 +12,10 @@ asyncTest( "Disabled button loses focus", function() {
 	element.focus();
 	setTimeout(function() {
 
-		ok( element.is( document.activeElement ), "Button is focused" );
+		equal( element[ 0 ], $.ui.safeActiveElement( document ), "Button is focused" );
 
 		element.button( "disable" );
-		ok( !element.is( document.activeElement ), "Button has had focus removed" );
+		notEqual( element[ 0 ], $.ui.safeActiveElement( document ), "Button has had focus removed" );
 		start();
 	});
 });

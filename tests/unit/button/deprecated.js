@@ -82,7 +82,7 @@ test( "disabled, null", function() {
 	deepEqual( true, $( "#radio02" ).prop( "disabled" ), "element is not disabled" );
 });
 
-test( "text and showLabel options proxied", function(){
+test( "text / showLabel options proxied", function(){
 	expect( 8 );
 	var button = $( "#button" );
 	button.button({
@@ -126,7 +126,7 @@ test( "text and showLabel options proxied", function(){
 		"Setting the showLabel option to false sets the text option to false on init" );
 });
 
-test( "icon and icons options properly proxied", function(){
+test( "icon / icons options properly proxied", function(){
 	expect( 10 );
 
 	var button = $( "#button" );

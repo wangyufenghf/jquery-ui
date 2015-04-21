@@ -9,19 +9,21 @@ test( "disabled, explicit value", function( assert ) {
 	expect( 8 );
 
 	var element = $( "#button" ).button({ disabled: false });
-	ok( !element.button( "option", "disabled" ), "disabled option set to false" );
-	ok( !element.prop( "disabled" ), "Disabled property is false" );
+
+	strictEqual( element.button( "option", "disabled" ), false, "disabled option set to false" );
+	strictEqual( element.prop( "disabled" ), false, "Disabled property is false" );
 
 	assert.lacksClasses( element.button( "widget" ), "ui-state-disabled ui-button-disabled" );
 
 	element = $( "#button" ).button({ disabled: true });
 
 	assert.hasClasses( element.button( "widget" ), "ui-state-disabled" );
-	ok( !element.button( "widget" ).attr( "aria-disabled" ), "element does not get aria-disabled" );
+	strictEqual( element.button( "widget" ).attr( "aria-disabled" ), undefined,
+		"element does not get aria-disabled" );
 	assert.hasClasses( element.button( "widget" ), "ui-button-disabled" );
 
-	ok( element.button( "option", "disabled" ), "disabled option set to true" );
-	ok( element.prop( "disabled" ), "Disabled property is set" );
+	strictEqual( element.button( "option", "disabled" ), true, "disabled option set to true" );
+	strictEqual( element.prop( "disabled" ), true, "Disabled property is set" );
 });
 
 // We are testing the default here because the default null is a special value which means to check
@@ -31,61 +33,75 @@ test( "disabled, null", function() {
 	expect( 4 );
 	var element = $( "#button" ),
 		elementDisabled = $( "#button-disabled" );
+
 	element.add( elementDisabled ).button({ disabled: null });
-	ok( !element.button( "option", "disabled" ), "disabled option set to false" );
-	ok( !element.prop( "disabled" ), "element is disabled" );
-	ok( elementDisabled.button( "option", "disabled" ), "disabled option set to true" );
-	ok( elementDisabled.prop( "disabled" ), "element is disabled" );
+	strictEqual( element.button( "option", "disabled" ), false, "disabled option set to false" );
+	strictEqual( element.prop( "disabled" ), false, "element is disabled" );
+	strictEqual( elementDisabled.button( "option", "disabled" ), true,
+		"disabled option set to true" );
+	strictEqual( elementDisabled.prop( "disabled" ), true, "element is disabled" );
 });
 
 test( "showLabel, false, without icon", function( assert ) {
-	expect( 1 );
+	expect( 4 );
 
 	var button = $( "#button" ).button({
-			showLabel: false
-		});
+		showLabel: false
+	});
 
-	assert.hasClasses( button, "ui-corner-all ui-widget" );
+	assert.lacksClasses( button, "ui-button-icon-only" );
+	strictEqual( button.button( "option", "showLabel" ), true,
+		"showLabel false only allowed if icon true" );
+
+	button.button( "option", "showLabel", false );
+	assert.lacksClasses( button, "ui-button-icon-only" );
+	strictEqual( button.button( "option", "showLabel" ), true,
+		"showLabel false only allowed if icon true" );
 });
 
 test( "showLabel, false, with icon", function( assert ) {
 	expect( 1 );
-	$("#button").button({
+	var button = $( "#button" ).button( {
 		showLabel: false,
 		icon: "iconclass"
-	});
-	assert.hasClasses( $( "#button" ), "ui-button ui-corner-all ui-widget ui-button-icon-only" );
-});
+	} );
+	assert.hasClasses( button, "ui-button ui-corner-all ui-widget ui-button-icon-only" );
+} );
 
 test( "label, default", function() {
 	expect( 2 );
-	$( "#button" ).button();
-	deepEqual( $( "#button" ).text(), "Label" );
-	deepEqual( $( "#button" ).button( "option", "label" ), "Label" );
+	var button = $( "#button" ).button();
+
+	deepEqual( button.text(), "Label" );
+	deepEqual( button.button( "option", "label" ), "Label" );
 });
 
 test( "label, explicit value", function() {
 	expect( 2 );
-	$( "#button" ).button({
+	var button = $( "#button" ).button({
 		label: "xxx"
 	});
-	deepEqual( $( "#button" ).text(), "xxx" );
-	deepEqual( $( "#button" ).button( "option", "label" ), "xxx" );
+
+	deepEqual( button.text(), "xxx" );
+	deepEqual( button.button( "option", "label" ), "xxx" );
 });
 
 test( "label, default, with input type submit", function() {
 	expect( 2 );
-	deepEqual( $( "#submit" ).button().val(), "Label" );
-	deepEqual( $( "#submit" ).button( "option", "label" ), "Label" );
+	var button = $( "#submit" ).button()
+
+	deepEqual( button.val(), "Label" );
+	deepEqual( button.button( "option", "label" ), "Label" );
 });
 
 test( "label, explicit value, with input type submit", function() {
 	expect( 2 );
-	var label = $( "#submit" ).button({
+	var button = $( "#submit" ).button({
 		label: "xxx"
-	}).val();
-	deepEqual( label, "xxx" );
-	deepEqual( $( "#submit" ).button( "option", "label" ), "xxx" );
+	});
+
+	deepEqual( button.val(), "xxx" );
+	deepEqual( button.button( "option", "label" ), "xxx" );
 });
 
 test( "icon", function( assert ) {
@@ -108,7 +124,7 @@ test( "icon", function( assert ) {
 });
 
 test( "icon position", function( assert ) {
-	expect( 21 );
+	expect( 22 );
 
 	var button = $( "#button" ).button( {
 			icon: "ui-icon-gear"
@@ -126,6 +142,8 @@ test( "icon position", function( assert ) {
 	assert.lacksClasses( icon, "ui-widget-icon-block" );
 
 	button.button( "option", "iconPosition", "end" );
+	icon = button.find( ".ui-icon" );
+	space = button.find( ".ui-button-icon-space" );
 	equal( icon.length, 1, "Changing position to end does not re-create or duplicate icon" );
 	equal( button.button( "option", "iconPosition" ), "end", "Button has iconPosition end" );
 	equal( button.contents().last()[ 0 ], icon[ 0 ], "icon is appended when position is end" );
@@ -135,13 +153,16 @@ test( "icon position", function( assert ) {
 	assert.lacksClasses( icon, "ui-widget-icon-block" );
 
 	button.button( "option", "iconPosition", "top" );
+	icon = button.find( ".ui-icon" );
 	equal( icon.length, 1, "Changing position to top does not re-create or duplicate icon" );
 	equal( button.button( "option", "iconPosition" ), "top", "Button has iconPosition top" );
 	equal( button.contents()[ 0 ], icon[ 0 ], "icon is prepended when position is top" );
 	ok( !button.find( "ui-button-icon-space" ).length,
 		"Button should not have an iconSpace with position: top" );
+	assert.hasClasses( icon, "ui-widget-icon-block" );
 
 	button.button( "option", "iconPosition", "bottom" );
+	icon = button.find( ".ui-icon" );
 	equal( icon.length, 1, "Changing position to bottom does not re-create or duplicate icon" );
 	equal( button.button( "option", "iconPosition" ), "bottom", "Button has iconPosition top" );
 	equal( button.contents().last()[ 0 ], icon[ 0 ], "icon is prepended when position is bottom" );
