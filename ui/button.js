@@ -37,20 +37,6 @@
 	}
 }( function( $ ) {
 
-var formResetHandler = function() {
-		var form = $( this );
-
-		// Wait for the form reset to actually happen before refreshing
-		setTimeout( function() {
-
-			// We find .ui-button first, then filter by :ui-button,
-			// because widget pseudo selectors are very very slow, but
-			// we need to filter out CSS-only buttons
-			form.find( ".ui-button" ).filter( ":ui-button" ).button( "refresh" );
-		} );
-	},
-	forms = {};
-
 $.widget( "ui.button", {
 	version: "@VERSION",
 	defaultElement: "<button>",
@@ -85,18 +71,6 @@ $.widget( "ui.button", {
 	},
 
 	_create: function() {
-		this.formElement = $( this.element[ 0 ].form ).uniqueId();
-		this.formId = this.formElement.attr( "id" );
-
-		forms[ this.formId ] = forms[ this.formId ] || 0;
-
-		// We don't use _on and _off here because we want all the checkboxes in the same form to use
-		// single handler which handles all the checkboxradio widgets in the form
-		if ( forms[ this.formId ] === 0 ) {
-			this.formElement.on( "reset." + this.widgetFullName, formResetHandler );
-		}
-		forms[ this.formId ]++;
-
 		if ( !this.option.showLabel & !this.options.icon ) {
 			this.options.showLabel = true;
 		}
@@ -182,7 +156,7 @@ $.widget( "ui.button", {
 			this.icon[ this._getAttachMethod( true, icon ? undefined : value ) ]( this.iconSpace );
 		} else {
 			this._addClass( this.icon, null, "ui-widget-icon-block" );
-			if( this.iconSpace ) {
+			if ( this.iconSpace ) {
 				this.iconSpace.remove();
 			}
 		}
@@ -199,11 +173,6 @@ $.widget( "ui.button", {
 		}
 		if ( !this.hasTitle ) {
 			this.element.removeAttr( "title" );
-		}
-
-		forms[ this.formId ]--;
-		if ( forms[ this.formId ] === 0 ) {
-			this.formElement.off( "reset." + this.widgetFullName, formResetHandler );
 		}
 	},
 

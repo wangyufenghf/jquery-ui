@@ -88,7 +88,7 @@ test( "label, explicit value", function() {
 
 test( "label, default, with input type submit", function() {
 	expect( 2 );
-	var button = $( "#submit" ).button()
+	var button = $( "#submit" ).button();
 
 	deepEqual( button.val(), "Label" );
 	deepEqual( button.button( "option", "label" ), "Label" );
