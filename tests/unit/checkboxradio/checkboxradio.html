@@ -5,7 +5,7 @@
 	<title>jQuery UI Checkboxradio Test Suite</title>
 
 	<script src="../../lib/css.js" data-modules="core button checkboxradio"></script>
-	<script src="../../lib/bootstrap.js" data-modules="common core methods options"></script>
+	<script src="../../lib/bootstrap.js" data-widget="button"></script>
 </head>
 <body>
 
@@ -17,15 +17,15 @@
 	<input type="radio" id="radio02" name="radio"><label for="radio02">Choice 2</label>
 	<input type="radio" id="radio03" name="radio"><label for="radio03">Choice 3</label>
 </div>
-<form>
-	<div id="radio1" style="margin-top: 2em;">
+<form id="form1">
+	<div id="radio1">
 		<input type="radio" id="radio11" name="radio"><label for="radio11">Choice 1</label>
-		<input type="radio" id="radio12" name="radio" checked="checked"><label for="radio12">Choice 2</label>
-		<input type="radio" id="radio13" name="radio"><label for="radio13">Choice 3</label>
+		<input type="radio" id="radio12" name="radio"><label for="radio12">Choice 2</label>
+		<input type="radio" id="radio13" name="radio" checked="checked"><label for="radio13">Choice 3</label>
 	</div>
 </form>
-<form>
-	<div id="radio2" style="margin-top: 2em;">
+<form id="form2">
+	<div id="radio2">
 		<input type="radio" id="radio21" name="radio"><label for="radio21">Choice 1</label>
 		<input type="radio" id="radio22" name="radio"><label for="radio22">Choice 2</label>
 		<input type="radio" id="radio23" name="radio" checked="checked"><label for="radio23">Choice 3</label>

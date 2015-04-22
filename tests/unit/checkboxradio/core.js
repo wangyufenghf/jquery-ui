@@ -54,11 +54,11 @@ function radioFormAssert( noForm, form1, form2, assert ) {
 test( "radio groups", function( assert ) {
 	expect( 36 );
 	$( "input[type=radio]").checkboxradio();
-	radioFormAssert( ":eq(0)", ":eq(1)", ":eq(2)", assert );
+	radioFormAssert( ":eq(0)", ":eq(2)", ":eq(2)", assert );
 
 	// click outside of forms
 	$( "#radio0 .ui-button:eq(1)" ).simulate( "click" );
-	radioFormAssert(":eq(1)", ":eq(1)", ":eq(2)", assert );
+	radioFormAssert(":eq(1)", ":eq(2)", ":eq(2)", assert );
 
 	// click in first form
 	$( "#radio1 .ui-button:eq(0)").simulate( "click" );

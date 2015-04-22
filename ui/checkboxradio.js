@@ -34,8 +34,7 @@ var formResetHandler = function() {
 			form.find( ".ui-checkboxradio" ).checkboxradio( "refresh" );
 		} );
 	},
-	escapeId = new RegExp( /([!"#$%&'()*+,./:;<=>?@[\]^`{|}~])/g ),
-	forms = {};
+	escapeId = new RegExp( /([!"#$%&'()*+,./:;<=>?@[\]^`{|}~])/g );
 
 $.widget( "ui.checkboxradio", {
 	version: "@VERSION",
@@ -84,17 +83,19 @@ $.widget( "ui.checkboxradio", {
 	},
 
 	_create: function() {
-		this.formElement = $( this.element[ 0 ].form ).uniqueId();
-		this.formId = this.formElement.attr( "id" );
-
-		forms[ this.formId ] = forms[ this.formId ] || 0;
+		this.formParent = this._getFormParent();
 
 		// We don't use _on and _off here because we want all the checkboxes in the same form to use
 		// single handler which handles all the checkboxradio widgets in the form
-		if ( forms[ this.formId ] === 0 ) {
-			this.formElement.on( "reset." + this.widgetFullName, formResetHandler );
+		var formCount = this.formParent.data( "uiCheckboxradioCount" ) || 0;
+
+		// We don't use _on and _off here because we want all the checkboxes in the same form to use
+		// single handler which handles all the checkboxradio widgets in the form
+		if ( formCount === 0 ) {
+			this.formParent.on( "reset." + this.widgetFullName, formResetHandler );
 		}
-		forms[ this.formId ]++;
+
+		this.formParent.data( "uiCheckboxradioCount", formCount + 1 );
 
 		if ( this.options.disabled == null ) {
 			this.options.disabled = this.element[ 0 ].disabled || false;
@@ -115,49 +116,50 @@ $.widget( "ui.checkboxradio", {
 
 	_findLabel: function() {
 		var ancestor, labelSelector, id,
-			parent = this.element.closest( "label" );
+			parent;
 
 		// Check control.labels first
 		if ( this.element[ 0 ].labels !== undefined && this.element[ 0 ].labels.length > 0 ) {
 			this.label = $( this.element[ 0 ].labels[ 0 ] );
-		} else {
-			parent = this.element.closest( "label" );
+			return;
+		}
 
-			if ( parent.length > 0 ) {
-				this.label = parent;
-				this.parentLabel = true;
-				return;
-			}
+		parent = this.element.closest( "label" );
 
-			// We don't search against the document in case the element
-			// is disconnected from the DOM
-			ancestor = this.element.parents().last();
+		if ( parent.length > 0 ) {
+			this.label = parent;
+			this.parentLabel = true;
+			return;
+		}
 
-			// Look for the label based on the id
-			id = this.element.attr( "id" );
-			if ( id ) {
-				labelSelector = "label[for='" +
-					this.element.attr( "id" ).replace( escapeId, "\\$1" ) + "']";
-				this.label = ancestor.find( labelSelector );
+		// We don't search against the document in case the element
+		// is disconnected from the DOM
+		ancestor = this.element.parents().last();
 
+		// Look for the label based on the id
+		id = this.element.attr( "id" );
+		if ( id ) {
+			labelSelector = "label[for='" +
+				this.element.attr( "id" ).replace( escapeId, "\\$1" ) + "']";
+			this.label = ancestor.find( labelSelector );
+
+			if ( !this.label.length ) {
+
+				// The label was not found, make sure ancestors exist. If they do check their
+				// siblings, if they dont check the elements siblings
+				ancestor = ancestor.length ? ancestor.siblings() : this.element.siblings();
+
+				// Check if any of the new set of ancestors is the label
+				this.label = ancestor.filter( labelSelector );
 				if ( !this.label.length ) {
 
-					// The label was not found, make sure ancestors exist. If they do check their
-					// siblings, if they dont check the elements siblings
-					ancestor = ancestor.length ? ancestor.siblings() : this.element.siblings();
-
-					// Check if any of the new set of ancestors is the label
-					this.label = ancestor.filter( labelSelector );
-					if ( !this.label.length ) {
-
-						// Still not found look inside the ancestors for the label
-						this.label = ancestor.find( labelSelector );
-					}
+					// Still not found look inside the ancestors for the label
+					this.label = ancestor.find( labelSelector );
 				}
 			}
-			if ( !this.label || !this.label.length ) {
-				$.error( "No label found for checkboxradio widget" );
-			}
+		}
+		if ( !this.label || !this.label.length ) {
+			$.error( "No label found for checkboxradio widget" );
 		}
 	},
 
@@ -196,20 +198,44 @@ $.widget( "ui.checkboxradio", {
 		return this.label;
 	},
 
+	_getFormParent: function( element ) {
+		var parent;
+
+		element = element || this.element[ 0 ];
+
+		if ( element.form && typeof element.form !== "string" ) {
+			return $( element.form );
+		} else if ( !element.form ) {
+			return $( "body" );
+		}
+
+		// Support: IE8 only ( the rest of the method )
+		// IE8 supports the form property but not the form attribute worse yet it if you supply the
+		// form attribute it overwrites the form property with the string. Other supported browsers
+		// like all other IE's and android 2.3 support the form attribute not at all or partially
+		// we dont care in those cases because they still always return an element. We are not
+		// trying to fix the form attribute here only deal with the prop supplying a string.
+		parent = this.document.getElementByID( element.form );
+		if ( parent.length ) {
+			return $( parent );
+		}
+		parent = $( element ).closest( "form" );
+		if ( parent.length ) {
+			return parent;
+		}
+		return $( "body" );
+	},
+
 	_getRadioGroup: function() {
 		var name = this.element[ 0 ].name,
-			form = this.element[ 0 ].form,
+			that = this,
 			radios = $( [] );
+
 		if ( name ) {
 			name = name.replace( escapeId, "\\$1" );
-			if ( form ) {
-				radios = $( form ).find( "[name='" + name + "']" );
-			} else {
-				radios = this.document.find( "[name='" + name + "']" )
-					.filter( function() {
-						return !this.form;
-					} );
-			}
+			radios = this.formParent.find( "[name='" + name.replace( escapeId, "\\$1" ) + "']" ).filter( function() {
+				return that._getFormParent( this )[ 0 ] === that.formParent[ 0 ];
+			} );
 		}
 		return radios.not( this.element );
 	},
@@ -238,14 +264,17 @@ $.widget( "ui.checkboxradio", {
 	},
 
 	_destroy: function() {
-		if ( this.icon ) {
-			this.icon.remove();
-			this.iconSpace.remove();
+		var formCount = this.formParent.data( "uiCheckboxradioCount" ) - 1;
+
+		this.formParent.data( "uiCheckboxradioCount", formCount );
+
+		if ( formCount === 0 ) {
+			this.formParent.off( "reset." + this.widgetFullName, formResetHandler );
 		}
 
-		forms[ this.formId ]--;
-		if ( forms[ this.formId ] === 0 ) {
-			this.formElement.off( "reset." + this.widgetFullName, formResetHandler );
+		if ( formCount === 0 ) {
+			this.icon.remove();
+			this.iconSpace.remove();
 		}
 	},
 
