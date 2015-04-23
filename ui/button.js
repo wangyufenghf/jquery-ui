@@ -90,7 +90,15 @@ $.widget( "ui.button", {
 				"keyup": function( event ) {
 					if ( event.keyCode === $.ui.keyCode.SPACE ) {
 						event.preventDefault();
-						this.element[ 0 ].click();
+
+						// Support: PhantomJS <= 1.9, IE 8 Only
+						// If a native click is available use it so we actually cause navigation
+						// otherwise just trigger a click event
+						if ( this.element[ 0 ].click ) {
+							this.element[ 0 ].click();
+						} else {
+							this.element.trigger( "click" );
+						}
 					}
 				}
 			} );
@@ -112,7 +120,7 @@ $.widget( "ui.button", {
 			}
 		}
 		if ( this.options.icon ) {
-			this._updateIcon( this.options.icon );
+			this._updateIcon( "icon", this.options.icon );
 			this._updateTooltip();
 		}
 	},
@@ -125,11 +133,12 @@ $.widget( "ui.button", {
 		}
 	},
 
-	_updateIcon: function( value, option ) {
+	_updateIcon: function( option, value ) {
 		var icon = option !== "iconPosition",
 			position = icon ? this.options.iconPosition : value,
 			displayBlock = position === "top" || position === "bottom";
 
+		// Create icon
 		if ( !this.icon ) {
 			this.icon = $( "<span>" );
 
@@ -139,26 +148,35 @@ $.widget( "ui.button", {
 				this._addClass( "ui-button-icon-only" );
 			}
 		} else if ( icon ) {
+
+			// If we are updating the icon remove the old icon class
 			this._removeClass( this.icon, null, this.options.icon );
-			if ( displayBlock ) {
-				this._removeClass( this.icon, null, "ui-wiget-icon-block" );
-			}
 		}
+
+		// If we are updating the icon add the new icon class
 		if ( icon ) {
 			this._addClass( this.icon, null, value );
 		}
-		this.element[ this._getAttachMethod( false, icon ? undefined : value ) ]( this.icon );
-		if ( !displayBlock ) {
-			if ( !this.iconSpace ) {
-				this.iconSpace = $( "<span> </span>" );
-				this._addClass( this.iconSpace, "ui-button-icon-space" );
-			}
-			this.icon[ this._getAttachMethod( true, icon ? undefined : value ) ]( this.iconSpace );
-		} else {
+
+		this._attachIcon( position );
+
+		// If the icon is on top or bottom we need to add the ui-widget-icon-block class and remove
+		// the iconSpace if there is one.
+		if ( displayBlock ) {
 			this._addClass( this.icon, null, "ui-widget-icon-block" );
 			if ( this.iconSpace ) {
 				this.iconSpace.remove();
 			}
+		} else {
+
+			// Position is beginning or end so remove the ui-widget-icon-block class and add the
+			// space if it does not exist
+			if ( !this.iconSpace ) {
+				this.iconSpace = $( "<span> </span>" );
+				this._addClass( this.iconSpace, "ui-button-icon-space" );
+			}
+			this._removeClass( this.icon, null, "ui-wiget-icon-block" );
+			this._attachIconSpace( position );
 		}
 	},
 
@@ -176,23 +194,28 @@ $.widget( "ui.button", {
 		}
 	},
 
-	_getAttachMethod: function( space, position ) {
-		position = position || this.options.iconPosition;
-		return position === "top" || position === "beginning" ?
-			space ? "after" : "prepend" :
-			space ? "before" : "append";
+	_attachIconSpace: function( iconPosition ) {
+		this.icon[ /^(?:end|bottom)/.test( iconPosition ) ? "before" : "after" ]( this.iconSpace );
+	},
+
+	_attachIcon: function( iconPosition ) {
+		this.element[ /^(?:end|bottom)/.test( iconPosition ) ? "append" : "prepend" ]( this.icon );
 	},
 
 	_setOption: function( key, value ) {
 		var iconGroup;
 
-		if ( key === "icon" || key === "iconPosition" ) {
+		if ( key === "icon" ) {
 			if ( value ) {
-				this._updateIcon( value, key );
+				this._updateIcon( key, value );
 			} else {
 				this.icon.remove();
 				this.iconSpace.remove();
 			}
+		}
+
+		if ( key === "iconPosition" ) {
+			this._updateIcon( key, value );
 		}
 
 		// Make sure we can't end up with a button that has neither text nor icon
@@ -204,6 +227,7 @@ $.widget( "ui.button", {
 				value = true;
 			}
 		}
+
 		if ( key === "label" ) {
 			if ( this.isInput ) {
 				this.element.val( value );
@@ -212,9 +236,10 @@ $.widget( "ui.button", {
 				// If there is an icon, append it, else nothing then append the value
 				// this avoids removal of the icon when setting label text
 				this.element.html( value );
-				if ( !!this.icon ) {
+				if ( this.icon ) {
 					iconGroup = this.icon.add( this.iconSpace );
-					this.element[ this._getAttachMethod() ]( iconGroup );
+					this._attachIcon( this.options.iconPosition );
+					this._attachIconSpace( this.options.iconPosition );
 				}
 			}
 		}
