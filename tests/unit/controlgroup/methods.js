@@ -62,7 +62,10 @@ test( "refresh", function() {
 
 	expect( 246 );
 
+	// Iterate through supported element markup
 	$.each( tests, function( widget, html ) {
+
+		// Check in both horizontal and vertical orientations
 		$.each( orientations, function( name, classes ) {
 			var i, control, currentClasses,
 				controls = [],
@@ -70,38 +73,14 @@ test( "refresh", function() {
 					direction: name
 				}).appendTo( "body" );
 
-			for ( i = 0; i < 4; i++ ) {
-				control = $( html ).attr( "id", "id" + i )
-					.add( $( "<label>" ).clone().attr( "for", "id" + i ) );
-
-				controls.push( control );
-				element.append( control );
-			}
-			element.controlgroup( "refresh" );
-			for ( i = 0; i < 4; i++ ) {
-				strictEqual( controls[ i ].is( ":ui-" + widget ), true,
-					name + ": " + widget + " " + i + ": is a " + widget + " widget after refresh" );
-			}
-			checkCornerClasses( classes );
-			iterateHidden( true );
-			element.controlgroup( "option", "excludeInvisible", false );
-			iterateHidden();
-
-			controls[ 0 ].prop( "disabled", true );
-
-			element.controlgroup( "refresh" );
-
-			strictEqual( controls[ 0 ][ widget ]( "widget" ).hasClass( "ui-state-disabled" ), true,
-				"Checkbox has ui-state-disabled after adding disabled prop and refreshing control group" );
-
-			element.remove();
-
 			function showElement( index, value ) {
 				$( value )[ widget ]( "widget" ).show();
 			}
+
+			// Hide each element and check the corner classes
 			function iterateHidden( excludeInvisible ) {
 				for ( i = 0; i < 4; i++ ) {
-					$.each( controls, showElement );
+					$( controls ).each( showElement );
 					controls[ i ][ widget ]( "widget" ).hide();
 					currentClasses = classes.slice( 0 );
 					if ( excludeInvisible ) {
@@ -117,12 +96,54 @@ test( "refresh", function() {
 					checkCornerClasses( currentClasses );
 				}
 			}
+
+			// checks the elements with in the controlgroup against the expected class list
 			function checkCornerClasses( classList ) {
 				for ( var j = 0; j < 4; j++ ) {
 					strictEqual( hasCornerClass( controls[ j ][ widget ]( "widget" ), classList[ j ] ), !!classList[ j ],
 						name + ": " + widget + " " + j + ": has class " + classList[ j ] + " after refresh" );
 				}
 			}
+
+			// Add a label for each element and then append the element to the control group
+			for ( i = 0; i < 4; i++ ) {
+				control = $( html ).attr( "id", "id" + i )
+					.add( $( "<label>" ).clone().attr( "for", "id" + i ) );
+
+				controls.push( control );
+				element.append( control );
+			}
+
+			// Refresh the controlgroup now that its populated
+			element.controlgroup( "refresh" );
+			for ( i = 0; i < 4; i++ ) {
+				strictEqual( controls[ i ].is( ":ui-" + widget ), true,
+					name + ": " + widget + " " + i + ": is a " + widget + " widget after refresh" );
+			}
+
+			// Check that we have the right classes
+			checkCornerClasses( classes );
+
+			// hide each element and then check its classes
+			iterateHidden( true );
+
+			// Set the exclude option to false so we no longer care about hidden
+			element.controlgroup( "option", "excludeInvisible", false );
+
+			// Iterate hiding the elements again and check their corner classes
+			iterateHidden();
+
+			// Disable the first control
+			controls[ 0 ].prop( "disabled", true );
+
+			element.controlgroup( "refresh" );
+
+			// Ensure that calling refresh on the controlgroup refreshes its children
+			strictEqual( controls[ 0 ][ widget ]( "widget" ).hasClass( "ui-state-disabled" ), true,
+				"Checkbox has ui-state-disabled after adding disabled prop and refreshing control group" );
+
+			// remove the controlgroup before we start the next set
+			element.remove();
 		});
 	});
 });
