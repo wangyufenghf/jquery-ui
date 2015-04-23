@@ -85,8 +85,6 @@ $.widget( "ui.checkboxradio", {
 	_create: function() {
 		this.formParent = this._getFormParent();
 
-		// We don't use _on and _off here because we want all the checkboxes in the same form to use
-		// single handler which handles all the checkboxradio widgets in the form
 		var formCount = this.formParent.data( "uiCheckboxradioCount" ) || 0;
 
 		// We don't use _on and _off here because we want all the checkboxes in the same form to use
@@ -124,8 +122,12 @@ $.widget( "ui.checkboxradio", {
 			return;
 		}
 
+		// Support: IE <= 11, FF <= 37, Android <=2.3 only
+		// Above browsers do not support control.labels everything below is to support them
+		// as well as document fragments control.labels does not work on document fragments anywhere
 		parent = this.element.closest( "label" );
 
+		// Check if the input has a parent thats a label
 		if ( parent.length > 0 ) {
 			this.label = parent;
 			this.parentLabel = true;
@@ -210,12 +212,12 @@ $.widget( "ui.checkboxradio", {
 		}
 
 		// Support: IE8 only ( the rest of the method )
-		// IE8 supports the form property but not the form attribute worse yet it if you supply the
+		// IE8 supports the form property, but not the form attribute, worse yet if you supply the
 		// form attribute it overwrites the form property with the string. Other supported browsers
-		// like all other IE's and android 2.3 support the form attribute not at all or partially
-		// we dont care in those cases because they still always return an element. We are not
-		// trying to fix the form attribute here only deal with the prop supplying a string.
-		parent = this.document.getElementByID( element.form );
+		// like all other IE's and Android 2.3 support the form attribute not at all or partially.
+		// We don't care in those cases because they still always return an element. We are not
+		// trying to fix the form attribute here, only deal with the prop supplying a string.
+		parent = this.document[ 0 ].getElementByID( element.form );
 		if ( parent.length ) {
 			return $( parent );
 		}
@@ -272,7 +274,7 @@ $.widget( "ui.checkboxradio", {
 			this.formParent.off( "reset." + this.widgetFullName, formResetHandler );
 		}
 
-		if ( formCount === 0 ) {
+		if ( this.icon ) {
 			this.icon.remove();
 			this.iconSpace.remove();
 		}

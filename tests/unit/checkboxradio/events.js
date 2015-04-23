@@ -21,6 +21,7 @@ asyncTest( "form reset / click", function( assert ) {
 		form1 = $( "#form1" ),
 		form2 = $( "#form2" );
 
+	// Checkes that only the specified radio is checked in the group
 	function assertChecked( checked ) {
 		$.each( widgets, function( index ) {
 			var method = index === checked ? "hasClasses" : "lacksClasses";
@@ -29,20 +30,21 @@ asyncTest( "form reset / click", function( assert ) {
 		} );
 	}
 
+	// Checks the form count on each form
 	function assertFormCount( count ) {
 		equal( form1.data( "uiCheckboxradioCount" ), count, "Form1 has a count of " + count );
 		equal( form2.data( "uiCheckboxradioCount" ), 3, "Form2 has a count of 3" );
 	}
 
-	function testForms( original, current, start ) {
-		var count = 3 - current;
-		assertChecked( original );
+	// Run the tests
+	function testForms( current, start ) {
+		assertChecked( 2 );
 
 		if ( !start && current !== 0 ) {
 			radios[ current - 1 ].checkboxradio( "destroy" );
 		}
 
-		assertFormCount( count );
+		assertFormCount( 3 - current );
 
 		radios[ current ].prop( "checked", true );
 		radios[ current ].trigger( "change" );
@@ -51,27 +53,25 @@ asyncTest( "form reset / click", function( assert ) {
 		form1.trigger( "reset" );
 	}
 
+	// Recourse run the tests in a recursive set timeout with call back for the resets
+	function interate( i ) {
+		setTimeout( function() {
+			if ( i < 3 ) {
+				testForms( i );
+				interate( i + 1 );
+				return;
+			}
+			radios[ 2 ].checkboxradio( "destroy" );
+			assertChecked( false );
+			start();
+		} );
+	}
+
 	$( "#form2 input" ).checkboxradio();
 
-	testForms( 2, 0, true );
-
-	setTimeout( function() {
-		testForms( 2, 0 );
-
-		setTimeout( function() {
-			testForms( 2, 1 );
-
-			setTimeout( function() {
-				testForms( 2, 2 );
-
-				setTimeout( function() {
-					radios[ 2 ].checkboxradio( "destroy" );
-					assertChecked( false );
-					start();
-				} );
-			});
-		});
-	});
+	// Check the starting state then kick everything off
+	testForms( 0, true );
+	interate( 0 );
 
 } );
 
