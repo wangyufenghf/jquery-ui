@@ -36,17 +36,20 @@ function replaceAtVersion() {
 
 function buildCDNPackage( callback ) {
 	console.log( "Building CDN package" );
-	var downloadBuilder = require( "download.jqueryui.com" ),
-		jqueryUi = new downloadBuilder.JqueryUi( path.resolve( "." ) ),
-		builder = new downloadBuilder.Builder( jqueryUi, ":all:" ),
-		packer = new downloadBuilder.ThemesPacker( builder, {
-			includeJs: true
+	var JqueryUi = require( "download.jqueryui.com/lib/jquery-ui" );
+	var Package = require( "download.jqueryui.com/lib/package-1-12" );
+	var Packager = require( "node-packager" );
+	var jqueryUi = new JqueryUi( path.resolve( "." ) );
+	var target = fs.createWriteStream( "../" + jqueryUi.pkg.name + "-" + jqueryUi.pkg.version + "-cdn.zip" );
+	var packager = new Packager( jqueryUi.files().cache, Package, {
+		components: jqueryUi.components().map( function( component ) {
+			return component.name;
 		} ),
-		target = "../" + jqueryUi.pkg.name + "-" + jqueryUi.pkg.version + "-cdn.zip";
-
-	// Zip dir structure must be flat, override default base folder
-	packer.basedir = "";
-	packer.zipTo( target, function( error ) {
+		themeVars: null
+	} );
+	packager.toZip( target, {
+		basedir: ""
+	}, function( error ) {
 		if ( error ) {
 			Release.abort( "Failed to zip CDN package", error );
 		}
@@ -92,5 +95,6 @@ Release.define( {
 
 module.exports.dependencies = [
 	"download.jqueryui.com@2.1.1",
+	"node-packager@0.0.6",
 	"shelljs@0.2.6"
 ];
